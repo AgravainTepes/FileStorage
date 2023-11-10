@@ -13,6 +13,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 @Aspect
@@ -25,15 +26,11 @@ public class FileValidator {
         this.props = propertiesLoader;
     }
 
-    @Before("execution(public * <String> uploadFile())")
+    @Before("execution(public * uploadFile(*))")
     public void beforeUploadingAdvice(JoinPoint joinPoint) {
         Object[] args = joinPoint.getArgs();
-        MultipartFile file = (MultipartFile) args[1];
-        String [] propsFileTypes = props.getTypes();
-        List<String> fileTypes = new ArrayList<>();
-        for (int i = 0; i < propsFileTypes.length; i++){
-        fileTypes.add(propsFileTypes[i]);
-        }
+        MultipartFile file = (MultipartFile) args[0];
+        List<String> fileTypes = props.getTypes();
         if (file.getSize() > props.getMaxSize()){
         throw new IncorrectFileSizeException(
                 "File to fat! Max size is "+ props.getMaxSize());
