@@ -1,5 +1,6 @@
 package com.agravain.filestorage.RESTController;
 
+import com.agravain.filestorage.DTO.FileDTO;
 import com.agravain.filestorage.FileDataModel.FileDataModel;
 import com.agravain.filestorage.Service.FileServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +14,8 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 
 @RestController
@@ -54,4 +57,12 @@ public class RESTController {
         List<String> names = service.getAllFileNames();
         return new ResponseEntity<>(names, HttpStatus.OK);
     }
+
+    @GetMapping("/filtered/{params}")
+    public ResponseEntity<List<FileDTO>> getModelsByParams(
+            @PathVariable String params) {
+        List<FileDTO> result = service.getModelsByParams(params);
+        return new ResponseEntity<>(result, HttpStatus.OK);
+    }
+
 }

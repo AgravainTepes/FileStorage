@@ -1,6 +1,7 @@
 package com.agravain.filestorage.Exceptions.GlobalExceptionsHandler;
 
 import com.agravain.filestorage.Exceptions.FileExceptions.*;
+import com.agravain.filestorage.Exceptions.FilterExceptions.IncorrectFilterParams;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -42,6 +43,12 @@ public class GlobalExceptionHandler {
         data.setInfo(exception.getMessage());
         return new ResponseEntity<>(data, HttpStatus.NOT_FOUND);
     }
-
+    @ExceptionHandler
+    public ResponseEntity<IncorrectFileDataException> handleException(
+            IncorrectFilterParams exception) {
+        IncorrectFileDataException data = new IncorrectFileDataException();
+        data.setInfo(exception.getMessage());
+        return new ResponseEntity<>(data, HttpStatus.BAD_REQUEST);
+    }
 
 }
