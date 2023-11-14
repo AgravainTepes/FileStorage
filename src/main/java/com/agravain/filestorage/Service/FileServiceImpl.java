@@ -17,8 +17,11 @@ import java.util.List;
 @Service
 public class FileServiceImpl implements FileService {
 
-    @Autowired
     private FileRepositoryImpl fileRepository;
+    @Autowired
+    public void setFileRepository(FileRepositoryImpl fileRepository) {
+        this.fileRepository = fileRepository;
+    }
 
     @Transactional
     public void saveFile(FileEntity fileModel) {
