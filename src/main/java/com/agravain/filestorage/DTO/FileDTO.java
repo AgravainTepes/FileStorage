@@ -1,6 +1,6 @@
 package com.agravain.filestorage.DTO;
 
-import com.agravain.filestorage.FileDataModel.FileDataModel;
+import com.agravain.filestorage.Entity.FileEntity;
 
 import java.time.LocalDateTime;
 
@@ -69,7 +69,7 @@ public class FileDTO {
         this.downloadURL = downloadURL;
     }
 
-    public void fileDataModelToDTO(FileDataModel model) {
+    public void fileDataModelToDTO(FileEntity model) {
         this.id = model.getId();
         this.name = model.getName();
         this.size = model.getSize();

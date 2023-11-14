@@ -2,7 +2,8 @@ package com.agravain.filestorage.DAO;
 
 
 import com.agravain.filestorage.Exceptions.FileExceptions.FileIsAlreadyExistsException;
-import com.agravain.filestorage.FileDataModel.FileDataModel;
+import com.agravain.filestorage.Entity.FileEntity;
+import com.agravain.filestorage.Exceptions.FileExceptions.NoSuchFileException;
 import com.agravain.filestorage.Filter.Filter;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.Query;
@@ -12,6 +13,7 @@ import org.springframework.stereotype.Repository;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public class FileRepositoryImpl implements FileRepository {
@@ -23,39 +25,39 @@ public class FileRepositoryImpl implements FileRepository {
     }
 
     @Override
-    public void saveFile(FileDataModel fileDataModel) {
+    public void saveFile(FileEntity fileEntity) {
         Query query = entityManager
-                .createQuery("select name from FileDataModel where name = :name and type = :type");
-        query.setParameter("name", fileDataModel.getName());
-        query.setParameter("type", fileDataModel.getType());
-        List<FileDataModel> model = query.getResultList();
+                .createQuery("select name from FileEntity where name = :name and type = :type");
+        query.setParameter("name", fileEntity.getName());
+        query.setParameter("type", fileEntity.getType());
+        List<FileEntity> model = query.getResultList();
         if (!model.isEmpty())
             throw new FileIsAlreadyExistsException("" +
                     "FIle with this name : " +
-                    fileDataModel.getName() +
+                    fileEntity.getName() +
                     " and this type : " +
-                    fileDataModel.getType() + " is already exists! " +
+                    fileEntity.getType() + " is already exists! " +
                     " If you want to update him use PATCH METHOD!");
-        entityManager.merge(fileDataModel);
+        entityManager.merge(fileEntity);
     }
 
     @Override
     public List<String> getAllFIleNames() {
         Query query = entityManager
-                .createQuery("select name from FileDataModel");
+                .createQuery("select name from FileEntity");
         List<String> names = query.getResultList();
         return names;
     }
 
     @Override
-    public List<FileDataModel> getModelsByParams(Filter filter) {
+    public List<FileEntity> getModelsByParams(Filter filter) {
         String nameForFilter = filter.getNameForFilterQuery();
         LocalDateTime startDateTime = filter.getStartDateTimeForFilterQuery();
         LocalDateTime endDateTime = filter.getEndDateTimeForFilterQuery();
-        List<FileDataModel> files = new ArrayList<>();
+        List<FileEntity> files = new ArrayList<>();
 
         Query query = entityManager.createQuery(
-                "from FileDataModel where" +
+                "from FileEntity where" +
                         "((:type1 IS NULL and :type2 IS NULL and :type3 IS NULL" +
                         " and :type4 IS NULL and :type5 IS NULL) or " +
                         "(type = :type1) or (type = :type2) or (type = :type3)" +
@@ -78,4 +80,17 @@ public class FileRepositoryImpl implements FileRepository {
 
         return files;
     }
+
+    public FileEntity downloadByID(int id) {
+        Query query = entityManager.createQuery(
+                "from FileEntity where id = :id");
+        query.setParameter("id", id);
+        List<FileEntity> fileEntityList = query.getResultList();
+        if (fileEntityList.isEmpty())
+            throw new NoSuchFileException("No such file with id: "
+                    + id + " inside DB!");
+        return fileEntityList.get(0);
+    }
+
+
 }

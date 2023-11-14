@@ -1,21 +1,20 @@
 package com.agravain.filestorage.RESTController;
 
 import com.agravain.filestorage.DTO.FileDTO;
-import com.agravain.filestorage.FileDataModel.FileDataModel;
+import com.agravain.filestorage.Entity.FileEntity;
 import com.agravain.filestorage.Service.FileServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
+import org.springframework.core.io.Resource;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 
 @RestController
@@ -33,7 +32,7 @@ public class RESTController {
     @PostMapping("/upload")
     public ResponseEntity<String> uploadFile(
             @RequestBody MultipartFile file) {
-        FileDataModel fileModel = new FileDataModel();
+        FileEntity fileModel = new FileEntity();
         byte[] fileBytes;
         try {
             fileBytes = file.getBytes();
@@ -41,7 +40,7 @@ public class RESTController {
             return new ResponseEntity<>(
                     "Something went wrong!", HttpStatus.BAD_REQUEST);
         }
-        fileModel.setType(file.getContentType());
+        fileModel.setType(MediaType.parseMediaType(file.getContentType()).getType());
         fileModel.setName(file.getOriginalFilename());
         fileModel.setSize(file.getSize());
         fileModel.setFile(fileBytes);
@@ -64,5 +63,8 @@ public class RESTController {
         List<FileDTO> result = service.getModelsByParams(params);
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
+
+
+
 
 }

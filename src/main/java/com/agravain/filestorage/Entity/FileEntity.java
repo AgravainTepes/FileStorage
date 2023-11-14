@@ -1,4 +1,4 @@
-package com.agravain.filestorage.FileDataModel;
+package com.agravain.filestorage.Entity;
 
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
@@ -6,9 +6,9 @@ import java.time.format.DateTimeFormatter;
 
 @Entity
 @Table(name = "files")
-public class FileDataModel {
+public class FileEntity {
 
-    public FileDataModel() {
+    public FileEntity() {
     }
 
     @Id
