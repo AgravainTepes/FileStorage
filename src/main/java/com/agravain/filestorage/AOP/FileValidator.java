@@ -30,18 +30,18 @@ public class FileValidator {
         Object[] args = joinPoint.getArgs();
         MultipartFile file = (MultipartFile) args[0];
         List<String> fileTypes = props.getTypes();
-        if (file.getSize() > props.getMaxSize()){
+        if (file.getSize() > props.getMaxSize())
         throw new IncorrectFileSizeException(
                 "File too fat! Max size = "+ props.getMaxSize() +" bytes. " +
                           "Yours file size = " + file.getSize());
-        }
-        if (file.getOriginalFilename().contains("..")){
+
+        if (file.getOriginalFilename().contains(".."))
         throw new IncorrectFileNameException("Incorrect file name!");
-        }
-        if (!fileTypes.contains(file.getContentType())){
+
+        if (!fileTypes.contains(file.getContentType()))
         throw new IncorrectFileTypeException(
                 "Incorrect content type! acceptable types: " + fileTypes);
-        }
+
     }
 
 
