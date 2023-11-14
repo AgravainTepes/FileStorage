@@ -1,10 +1,10 @@
 package com.agravain.filestorage.DAO;
 
 import com.agravain.filestorage.Entity.FileEntity;
-import com.agravain.filestorage.Filter.Filter;
 
+import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
+
 
 public interface FileRepository {
 
@@ -12,7 +12,10 @@ public interface FileRepository {
 
     List<String> getAllFIleNames();
 
-    List<FileEntity> getModelsByParams(Filter filter);
+    List<FileEntity> getModelsByParams(String name,
+                                      List<String> types,
+                                       LocalDateTime lower,
+                                       LocalDateTime upper);
 
     FileEntity downloadByID(int id);
 }

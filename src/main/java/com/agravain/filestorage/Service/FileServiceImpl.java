@@ -2,22 +2,22 @@ package com.agravain.filestorage.Service;
 
 import com.agravain.filestorage.DAO.FileRepositoryImpl;
 import com.agravain.filestorage.DTO.FileDTO;
+import com.agravain.filestorage.Exceptions.FileExceptions.IncorrectFileTimeException;
 import com.agravain.filestorage.Exceptions.FileExceptions.NoSuchFileException;
-import com.agravain.filestorage.Exceptions.FilterExceptions.IncorrectFilterParams;
 import com.agravain.filestorage.Entity.FileEntity;
-import com.agravain.filestorage.Filter.Filter;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.util.ArrayList;
-import java.util.List;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeParseException;
+import java.util.*;
 
 
 @Service
 public class FileServiceImpl implements FileService {
 
     private FileRepositoryImpl fileRepository;
+
     @Autowired
     public void setFileRepository(FileRepositoryImpl fileRepository) {
         this.fileRepository = fileRepository;
@@ -37,30 +37,47 @@ public class FileServiceImpl implements FileService {
     }
 
     @Transactional
-    public List<FileDTO> getModelsByParams(String params) {
-        Filter filter = new Filter();
-        filter.setNameForFilterQuery(params);
-        filter.setStartDateTimeForFilterQuery(params);
-        filter.setEndDateTimeForFilterQuery(params);
-        filter.setFileTypesForFilterQuery(params);
-        if (filter.isEmpty() && !params.isEmpty())
-            throw new IncorrectFilterParams("error in parameters!");
-        List<FileEntity> middleResult = fileRepository.getModelsByParams(filter);
-        if (middleResult.isEmpty())
-            throw new NoSuchFileException(
-                    "No such files with this parameters inside DB!");
-        List<FileDTO> finalResult = new ArrayList<>();
-        for (FileEntity model : middleResult) {
-            FileDTO fileDTO = new FileDTO();
-            fileDTO.fileDataModelToDTO(model);
-            finalResult.add(fileDTO);
+    public List<FileDTO> getModelsByParams(Map<String, String[]> params) {
+        String name = "";
+        LocalDateTime lowerTimeThreshold = null;
+        LocalDateTime upperTimeThreshold = null;
+        List<String> types = new ArrayList<>();
+        if (params.containsKey("name"))
+            name = params.get("name")[0];
+
+        if (params.containsKey("lower") && params.containsKey("upper")) {
+            try {
+                lowerTimeThreshold = LocalDateTime.parse(params.get("lower")[0]);
+                upperTimeThreshold = LocalDateTime.parse(params.get("upper")[0]);
+            } catch (DateTimeParseException e) {
+                throw new IncorrectFileTimeException("Invalid time parameter!" +
+                        " Please use pattern : 2024-12-31 23:59:59");
+            }
         }
-        return finalResult;
+        if (params.containsKey("type"))
+            types.addAll(Arrays.asList(params.get("type")));
+
+        if (types.isEmpty())
+            types.add(null);
+
+        List<FileEntity> entityList = fileRepository
+                .getModelsByParams(name, types, lowerTimeThreshold, upperTimeThreshold);
+        if (entityList.isEmpty())
+            throw new NoSuchFileException(
+                    "No such files with this parameters in data base!!!");
+        List<FileDTO> fileDTOS = new ArrayList<>();
+        for (FileEntity entity : entityList) {
+            FileDTO fileDTO = new FileDTO();
+            fileDTO.entityToDTO(entity);
+            fileDTOS.add(fileDTO);
+        }
+        return fileDTOS;
     }
-  public   FileEntity downloadByID(int id){
+
+    public FileEntity downloadByID(int id) {
         return null;
     }
-    }
+}
 
 
 

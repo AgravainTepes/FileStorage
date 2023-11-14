@@ -69,7 +69,7 @@ public class FileDTO {
         this.downloadURL = downloadURL;
     }
 
-    public void fileDataModelToDTO(FileEntity model) {
+    public void entityToDTO(FileEntity model) {
         this.id = model.getId();
         this.name = model.getName();
         this.size = model.getSize();
