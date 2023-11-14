@@ -16,6 +16,7 @@ import java.util.List;
 @Aspect
 @Component
 public class FileValidator {
+
     private PropertiesLoader props;
 
     @Autowired
@@ -30,7 +31,7 @@ public class FileValidator {
 
         MultipartFile file = (MultipartFile) pointArgs.get(0);
 
-        List<String> fileTypes = props.getTypes();
+        List<String> fileTypes = props.getTypeList();
 
         if (file.getSize() > props.getMaxSize())
             throw new IncorrectFileSizeException(
@@ -45,6 +46,4 @@ public class FileValidator {
                     "Incorrect content type! acceptable types: " + fileTypes);
 
     }
-
-
 }

@@ -2,6 +2,8 @@ package com.agravain.filestorage.Service;
 
 import com.agravain.filestorage.DTO.FileDTO;
 import com.agravain.filestorage.Entity.FileEntity;
+import com.agravain.filestorage.Utils.ZipSeparator;
+
 import java.util.List;
 import java.util.Map;
 
@@ -13,5 +15,5 @@ public interface FileService {
 
      List<FileDTO> getModelsByParams(Map<String, String[]> params);
 
-     byte[] downloadByID(Map<String, String[]> id);
+     ZipSeparator downloadByID(Map<String, String[]> id);
 }

@@ -1,30 +1,36 @@
 package com.agravain.filestorage.PropertiesLoader;
 
 
+import com.agravain.filestorage.Exceptions.FileExceptions.PropertiesLoadFailException;
 import org.springframework.stereotype.Component;
 
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Properties;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.util.Set;
 
 @Component
 public class PropertiesLoader {
+
     public PropertiesLoader() {
         Properties properties = loadProperties();
-        this.types =
-                loadTypesList(properties, "types.array");
+        this.typeList =
+                loadTypesList(properties);
         this.maxSize =
                 loadMaxSize(properties, "max.file.size");
     }
 
     private static String propertiesPath =
             "src/main/resources/FileTypesAndSize.properties";
-    private final ArrayList<String> types;
+
+    private final List<String> typeList;
+
     private final static int megabyteToByte = 1048576;
+
     private final static int kilobyteToByte = 1024;
+
     private final long maxSize;
 
     private static Properties loadProperties() {
@@ -33,35 +39,35 @@ public class PropertiesLoader {
         try {
             properties.load(new FileInputStream(propertiesPath));
         } catch (IOException e) {
+
+            throw new
+                    PropertiesLoadFailException("Properties loading collapsed!");
         }
         return properties;
     }
 
-    private static ArrayList<String> loadTypesList(Properties properties, String key) {
+    private static List<String> loadTypesList(Properties properties) {
 
-        String allInOne = properties.getProperty(key);
+        Set<String> allInOne = properties.stringPropertyNames();
 
-        ArrayList<String> types = new ArrayList<>();
+        List<String> typesList = new ArrayList<>();
 
-        Pattern pattern = Pattern.compile("[[.]\\w+]+");
+        for (String potentialType : allInOne) {
 
-        Matcher matcher = pattern.matcher(allInOne);
+            if (potentialType.startsWith("content.type")) {
 
-        for (int i = 0; matcher.find(); i++) {
-            types.add(matcher.group().trim());
+                String contentType =
+                        properties
+                                .getProperty(potentialType);
+
+                typesList
+                        .add(contentType);
+            }
         }
-        return types;
+
+        return typesList;
     }
 
-    public long getMaxSize() {
-
-        return maxSize;
-    }
-
-    public ArrayList<String> getTypes() {
-
-        return types;
-    }
 
     private static long loadMaxSize(Properties properties, String key) {
 
@@ -84,5 +90,15 @@ public class PropertiesLoader {
                 result = longMaxSize * kilobyteToByte;
         }
         return result;
+    }
+
+    public long getMaxSize() {
+
+        return maxSize;
+    }
+
+    public List<String> getTypeList() {
+
+        return typeList;
     }
 }

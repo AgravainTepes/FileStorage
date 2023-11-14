@@ -6,18 +6,16 @@ import com.agravain.filestorage.Entity.FileEntity;
 import com.agravain.filestorage.Exceptions.FileExceptions.IncorrectFileTimeException;
 import com.agravain.filestorage.Exceptions.FileExceptions.NoSuchFileException;
 import com.agravain.filestorage.Exceptions.FileExceptions.ZipFailException;
+import com.agravain.filestorage.Utils.ZipSeparator;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeParseException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.zip.CRC32;
+import java.util.*;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
@@ -99,7 +97,7 @@ public class FileServiceImpl implements FileService {
         return fileDTOS;
     }
 
-    public byte[] downloadByID(Map<String, String[]> id) {
+    public ZipSeparator downloadByID(Map<String, String[]> id) {
 
         List<String> StrIDList = new ArrayList<>();
 
@@ -115,8 +113,36 @@ public class FileServiceImpl implements FileService {
 
         List<FileEntity> entityList = fileRepository.downloadByID(IntIDList);
 
-        if (entityList.size() == 1)
-            return entityList.get(0).getFile();
+        ZipSeparator separator =
+                new ZipSeparator();
+
+        if (entityList.size() == 1) {
+            FileEntity singleEntity =
+                    entityList
+                            .get(0);
+
+
+            byte[] serialFile =
+                    singleEntity
+                            .getFile();
+
+            String contentType =
+                    singleEntity
+                            .getType();
+
+
+            separator
+                    .setSerialFile(serialFile);
+
+            separator
+                    .setIsZip(false);
+
+            separator
+                    .setContentType(contentType);
+
+            return separator;
+        }
+
 
         try (ByteArrayOutputStream bos = new ByteArrayOutputStream();
              ZipOutputStream zop = new ZipOutputStream(bos)) {
@@ -124,12 +150,6 @@ public class FileServiceImpl implements FileService {
             for (FileEntity entity : entityList) {
 
                 ZipEntry entry = new ZipEntry("/" + entity.getName());
-
-                CRC32 crc32 = new CRC32();
-
-                crc32.update(entity.getFile());
-
-                entry.setCrc(crc32.getValue());
 
                 entry.setSize(entity.getFile().length);
 
@@ -139,10 +159,20 @@ public class FileServiceImpl implements FileService {
 
                 zop.closeEntry();
             }
+
             zop.finish();
 
-            return bos.toByteArray();
+            ZipSeparator zipSeparator =
+                    new ZipSeparator();
+            separator
+                    .setSerialFile(bos.toByteArray());
+            separator
+                    .setIsZip(true);
+
+            return separator;
+
         }
+
         catch (IOException e) {
 
             throw new ZipFailException("Compression collapsed!");

@@ -3,6 +3,7 @@ package com.agravain.filestorage.RESTController;
 import com.agravain.filestorage.DTO.FileDTO;
 import com.agravain.filestorage.Entity.FileEntity;
 import com.agravain.filestorage.Service.FileServiceImpl;
+import com.agravain.filestorage.Utils.ZipSeparator;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
@@ -71,7 +72,7 @@ public class RESTController {
         service
                 .saveFile(fileEntity);
 
-        return new ResponseEntity<>("File uploaded!", HttpStatus.OK);
+        return new ResponseEntity<>(file.getContentType(), HttpStatus.OK);
     }
 
 
@@ -98,9 +99,15 @@ public class RESTController {
 
         Map<String, String[]> id = request.getParameterMap();
 
-        byte [] file = service.downloadByID(id);
+        ZipSeparator separator = service.downloadByID(id);
 
-        return ResponseEntity.ok().contentType(MediaType.parseMediaType("application/zip")).body(new ByteArrayResource(file));
+        if (separator.isZip())
+            return ResponseEntity
+                    .ok()
+                    .contentType(MediaType.parseMediaType("application/zip"))
+                    .body(new ByteArrayResource(separator.getSerialFile()));
+
+return null;
     }
 
 }
