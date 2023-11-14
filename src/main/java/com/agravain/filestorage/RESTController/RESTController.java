@@ -7,7 +7,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -40,7 +39,7 @@ public class RESTController {
             return new ResponseEntity<>(
                     "Something went wrong!", HttpStatus.BAD_REQUEST);
         }
-        fileModel.setType(MediaType.parseMediaType(file.getContentType()).getType());
+        fileModel.setType(file.getContentType());
         fileModel.setName(file.getOriginalFilename());
         fileModel.setSize(file.getSize());
         fileModel.setFile(fileBytes);
@@ -63,7 +62,6 @@ public class RESTController {
         List<FileDTO> result = service.getModelsByParams(params);
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
-
 
 
 
