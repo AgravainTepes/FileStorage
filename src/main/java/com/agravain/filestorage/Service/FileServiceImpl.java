@@ -44,9 +44,9 @@ public class FileServiceImpl implements FileService {
         if (filter.isEmpty() && !params.isEmpty())
             throw new IncorrectFilterParams("error in parameters!");
         List<FileDataModel> middleResult = fileRepository.getModelsByParams(filter);
-//        if (middleResult.isEmpty())
-//            throw new NoSuchFileException(
-//                    "No such files with this parameters inside DB!");
+        if (middleResult.isEmpty())
+            throw new NoSuchFileException(
+                    "No such files with this parameters inside DB!");
         List<FileDTO> finalResult = new ArrayList<>();
         for (FileDataModel model : middleResult) {
             FileDTO fileDTO = new FileDTO();

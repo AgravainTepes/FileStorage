@@ -1,7 +1,7 @@
 package com.agravain.filestorage.DAO;
 
 
-import com.agravain.filestorage.Exceptions.FileExceptions.IncorrectFileNameException;
+import com.agravain.filestorage.Exceptions.FileExceptions.FileIsAlreadyExistsException;
 import com.agravain.filestorage.FileDataModel.FileDataModel;
 import com.agravain.filestorage.Filter.Filter;
 import jakarta.persistence.EntityManager;
@@ -24,8 +24,19 @@ public class FileRepositoryImpl implements FileRepository {
 
     @Override
     public void saveFile(FileDataModel fileDataModel) {
-        entityManager
-                .merge(fileDataModel);
+        Query query = entityManager
+                .createQuery("select name from FileDataModel where name = :name and type = :type");
+        query.setParameter("name", fileDataModel.getName());
+        query.setParameter("type", fileDataModel.getType());
+        List<FileDataModel> model = query.getResultList();
+        if (!model.isEmpty())
+            throw new FileIsAlreadyExistsException("" +
+                    "FIle with this name : " +
+                    fileDataModel.getName() +
+                    " and this type : " +
+                    fileDataModel.getType() + " is already exists! " +
+                    " If you want to update him use PATCH METHOD!");
+        entityManager.merge(fileDataModel);
     }
 
     @Override
@@ -41,14 +52,14 @@ public class FileRepositoryImpl implements FileRepository {
         String nameForFilter = filter.getNameForFilterQuery();
         LocalDateTime startDateTime = filter.getStartDateTimeForFilterQuery();
         LocalDateTime endDateTime = filter.getEndDateTimeForFilterQuery();
-        List<String> fileTypes = filter.getFileTypesForFilterQuery();
-
         List<FileDataModel> files = new ArrayList<>();
 
         Query query = entityManager.createQuery(
                 "from FileDataModel where" +
-                        "((:type1 IS NULL and :type2 IS NULL and :type3 IS NULL and :type4 IS NULL and :type5 IS NULL) or "+
-                        "(type = :type1) or (type = :type2) or (type = :type3) or (type = :type4) or (type = :type5))  AND " +
+                        "((:type1 IS NULL and :type2 IS NULL and :type3 IS NULL" +
+                        " and :type4 IS NULL and :type5 IS NULL) or " +
+                        "(type = :type1) or (type = :type2) or (type = :type3)" +
+                        " or (type = :type4) or (type = :type5))  AND " +
                         "((:name IS NULL) or " +
                         "(lower(name) like concat('%', :name, '%'))) AND" +
                         "((:start IS NULL) or " +

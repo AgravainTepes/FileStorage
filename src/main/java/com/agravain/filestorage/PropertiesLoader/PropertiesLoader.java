@@ -57,12 +57,12 @@ public class PropertiesLoader {
 
     private static long loadMaxSize(Properties properties, String key) {
         String stringMaxSize = properties.getProperty(key);
-        CharSequence sequenceMaxSize = stringMaxSize;
         Long result = 0L;
-        if (sequenceMaxSize.length() >= 3) {
-            Long longMaxSize = Long
-                    .parseLong(sequenceMaxSize, 0,
-                            sequenceMaxSize.length() - 3,
+        if (stringMaxSize.length() >= 3 && stringMaxSize.endsWith("MB")
+                || stringMaxSize.endsWith("KB")) {
+            long longMaxSize = Long
+                    .parseLong(stringMaxSize, 0,
+                            stringMaxSize.length() - 3,
                             10);
             if (stringMaxSize.endsWith("MB"))
                 result = longMaxSize * megabyteToByte;

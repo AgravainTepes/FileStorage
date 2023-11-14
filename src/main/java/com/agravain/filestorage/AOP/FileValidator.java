@@ -32,7 +32,8 @@ public class FileValidator {
         List<String> fileTypes = props.getTypes();
         if (file.getSize() > props.getMaxSize()){
         throw new IncorrectFileSizeException(
-                "File to fat! Max size is "+ props.getMaxSize());
+                "File too fat! Max size = "+ props.getMaxSize() +" bytes. " +
+                          "Yours file size = " + file.getSize());
         }
         if (file.getOriginalFilename().contains("..")){
         throw new IncorrectFileNameException("Incorrect file name!");

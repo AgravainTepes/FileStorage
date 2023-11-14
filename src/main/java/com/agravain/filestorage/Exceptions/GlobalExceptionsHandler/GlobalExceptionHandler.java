@@ -50,5 +50,14 @@ public class GlobalExceptionHandler {
         data.setInfo(exception.getMessage());
         return new ResponseEntity<>(data, HttpStatus.BAD_REQUEST);
     }
+    @ExceptionHandler
+    public ResponseEntity<IncorrectFileDataException> handleException(
+            FileIsAlreadyExistsException exception) {
+        IncorrectFileDataException data = new IncorrectFileDataException();
+        data.setInfo(exception.getMessage());
+        return new ResponseEntity<>(data, HttpStatus.BAD_REQUEST);
+    }
+
+
 
 }
