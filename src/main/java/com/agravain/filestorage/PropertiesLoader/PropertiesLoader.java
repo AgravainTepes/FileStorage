@@ -48,10 +48,12 @@ public class PropertiesLoader {
     }
 
     public long getMaxSize() {
+
         return maxSize;
     }
 
     public ArrayList<String> getTypes() {
+
         return types;
     }
 
