@@ -8,7 +8,10 @@ import java.util.Map;
 public interface FileService {
 
      void saveFile(FileEntity fileEntity);
+
      List<String> getAllFileNames();
+
      List<FileDTO> getModelsByParams(Map<String, String[]> params);
-     FileEntity downloadByID(int id);
+
+     byte[] downloadByID(Map<String, String[]> id);
 }

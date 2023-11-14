@@ -1,7 +1,6 @@
 package com.agravain.filestorage.DAO;
 
 import com.agravain.filestorage.Entity.FileEntity;
-
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -17,5 +16,5 @@ public interface FileRepository {
                                        LocalDateTime lower,
                                        LocalDateTime upper);
 
-    FileEntity downloadByID(int id);
+    List<FileEntity> downloadByID(List<Integer> id);
 }

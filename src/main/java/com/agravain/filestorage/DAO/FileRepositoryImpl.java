@@ -8,7 +8,6 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
-
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -20,32 +19,39 @@ public class FileRepositoryImpl implements FileRepository {
 
     @Autowired
     public void setEntityManager(EntityManager entityManager) {
-        this.entityManager = entityManager;
+        this.entityManager =
+                entityManager;
     }
 
     @Override
     public void saveFile(FileEntity fileEntity) {
         Query query = entityManager
                 .createQuery("select name from FileEntity where name = :name and type = :type");
+
         query.setParameter("name", fileEntity.getName());
+
         query.setParameter("type", fileEntity.getType());
+
         List<FileEntity> model = query.getResultList();
+
         if (!model.isEmpty())
-            throw new FileIsAlreadyExistsException("" +
+            throw new FileIsAlreadyExistsException(
                     "FIle with this name : " +
                     fileEntity.getName() +
                     " and this type : " +
                     fileEntity.getType() + " is already exists! " +
                     " If you want to update him use PATCH METHOD!");
+
         entityManager.merge(fileEntity);
     }
 
     @Override
     public List<String> getAllFIleNames() {
+
         Query query = entityManager
                 .createQuery("select name from FileEntity");
-        List<String> names = query.getResultList();
-        return names;
+
+        return (List<String>) query.getResultList();
     }
 
     @Override
@@ -66,25 +72,42 @@ public class FileRepositoryImpl implements FileRepository {
                             "((:start IS NULL) or " +
                             "(updateDate >= :start AND " +
                             "updateDate <= :end))");
+
             query.setParameter("type1", types.get(i));
+
             query.setParameter("name", name);
+
             query.setParameter("start", lower);
+
             query.setParameter("end", upper);
+
             files.addAll(query.getResultList());
         }
 
         return files;
+
     }
 
-    public FileEntity downloadByID(int id) {
-        Query query = entityManager.createQuery(
-                "from FileEntity where id = :id");
-        query.setParameter("id", id);
-        List<FileEntity> fileEntityList = query.getResultList();
+    public List<FileEntity> downloadByID(List<Integer> id) {
+
+        List<FileEntity> fileEntityList = new ArrayList<>();
+
+        for (Integer integer : id) {
+
+            Query query = entityManager.createQuery(
+                    "from FileEntity where id = :id");
+
+            query.setParameter("id", integer.intValue());
+
+            fileEntityList.addAll(query.getResultList());
+
+        }
+
         if (fileEntityList.isEmpty())
             throw new NoSuchFileException("No such file with id: "
                     + id + " inside DB!");
-        return fileEntityList.get(0);
+
+        return fileEntityList;
     }
 
 

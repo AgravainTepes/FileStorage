@@ -69,7 +69,8 @@ public class FileEntity {
     }
 
     public void setCreateDate(LocalDateTime createDate) {
-        this.createDate = localDateTimeFormatter(createDate);
+        this.createDate =
+                localDateTimeFormatter(createDate);
     }
 
     public LocalDateTime getUpdateDate() {
@@ -77,13 +78,21 @@ public class FileEntity {
     }
 
     public void setUpdateDate(LocalDateTime updateDate) {
-        this.updateDate = localDateTimeFormatter(updateDate);
+        this.updateDate =
+                localDateTimeFormatter(updateDate);
     }
 
     public LocalDateTime localDateTimeFormatter(LocalDateTime reference) {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-        String middleResult = reference.format(formatter);
-        LocalDateTime result = LocalDateTime.parse(middleResult, formatter);
+
+        DateTimeFormatter formatter = DateTimeFormatter
+                .ofPattern("yyyy-MM-dd HH:mm:ss");
+
+        String middleResult =
+                reference.format(formatter);
+
+        LocalDateTime result =
+                LocalDateTime.parse(middleResult, formatter);
+
         return result;
     }
 

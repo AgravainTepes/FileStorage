@@ -6,11 +6,14 @@ import com.agravain.filestorage.Service.FileServiceImpl;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
+import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -32,21 +35,42 @@ public class RESTController {
     @PostMapping("/upload")
     public ResponseEntity<String> uploadFile(
             @RequestBody MultipartFile file) {
-        FileEntity fileModel = new FileEntity();
+
+        FileEntity fileEntity = new FileEntity();
+
         byte[] fileBytes;
+
         try {
+
             fileBytes = file.getBytes();
+
         } catch (IOException e) {
+
             return new ResponseEntity<>(
                     "Something went wrong!", HttpStatus.BAD_REQUEST);
         }
-        fileModel.setType(file.getContentType());
-        fileModel.setName(file.getOriginalFilename());
-        fileModel.setSize(file.getSize());
-        fileModel.setFile(fileBytes);
-        fileModel.setCreateDate(LocalDateTime.now());
-        fileModel.setUpdateDate(LocalDateTime.now());
-        service.saveFile(fileModel);
+        fileEntity
+                .setType(file
+                        .getContentType());
+
+        fileEntity
+                .setName(file.getOriginalFilename());
+
+        fileEntity
+                .setSize(file.getSize());
+
+        fileEntity
+                .setFile(fileBytes);
+
+        fileEntity
+                .setCreateDate(LocalDateTime.now());
+
+        fileEntity
+                .setUpdateDate(LocalDateTime.now());
+
+        service
+                .saveFile(fileEntity);
+
         return new ResponseEntity<>("File uploaded!", HttpStatus.OK);
     }
 
@@ -60,12 +84,23 @@ public class RESTController {
     @GetMapping("/filtered")
     public ResponseEntity<List<FileDTO>> getModelsByParams(
             HttpServletRequest request) {
+
         Map<String, String[]> params = request.getParameterMap();
-              List<FileDTO> fileModels = service.getModelsByParams(params);
+
+        List<FileDTO> fileModels = service.getModelsByParams(params);
 
         return new ResponseEntity<>(fileModels, HttpStatus.OK);
     }
 
+    @GetMapping("/download")
+    public ResponseEntity<Resource> downloadFilesByID(
+            HttpServletRequest request) {
 
+        Map<String, String[]> id = request.getParameterMap();
+
+        byte [] file = service.downloadByID(id);
+
+        return ResponseEntity.ok().contentType(MediaType.parseMediaType("application/zip")).body(new ByteArrayResource(file));
+    }
 
 }

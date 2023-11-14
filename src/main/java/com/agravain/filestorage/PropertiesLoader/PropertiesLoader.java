@@ -20,7 +20,8 @@ public class PropertiesLoader {
                 loadMaxSize(properties, "max.file.size");
     }
 
-    private static String propertiesPath = "src/main/resources/FileTypesAndSize.properties";
+    private static String propertiesPath =
+            "src/main/resources/FileTypesAndSize.properties";
     private final ArrayList<String> types;
     private final static int megabyteToByte = 1048576;
     private final static int kilobyteToByte = 1024;
@@ -37,10 +38,15 @@ public class PropertiesLoader {
     }
 
     private static ArrayList<String> loadTypesList(Properties properties, String key) {
+
         String allInOne = properties.getProperty(key);
+
         ArrayList<String> types = new ArrayList<>();
+
         Pattern pattern = Pattern.compile("[[.]\\w+]+");
+
         Matcher matcher = pattern.matcher(allInOne);
+
         for (int i = 0; matcher.find(); i++) {
             types.add(matcher.group().trim());
         }
@@ -58,16 +64,22 @@ public class PropertiesLoader {
     }
 
     private static long loadMaxSize(Properties properties, String key) {
+
         String stringMaxSize = properties.getProperty(key);
+
         Long result = 0L;
+
         if (stringMaxSize.length() >= 3 && stringMaxSize.endsWith("MB")
                 || stringMaxSize.endsWith("KB")) {
+
             long longMaxSize = Long
                     .parseLong(stringMaxSize, 0,
                             stringMaxSize.length() - 3,
                             10);
+
             if (stringMaxSize.endsWith("MB"))
                 result = longMaxSize * megabyteToByte;
+
             if (stringMaxSize.endsWith("KB"))
                 result = longMaxSize * kilobyteToByte;
         }
