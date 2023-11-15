@@ -36,42 +36,42 @@ public class RESTController {
     public ResponseEntity<String> uploadFile(
             @RequestBody MultipartFile file) {
 
-//        FileEntity fileEntity = new FileEntity();
-//
-//        byte[] fileBytes;
-//
-//        try {
-//
-//            fileBytes = file.getBytes();
-//
-//        } catch (IOException e) {
-//
-//            return new ResponseEntity<>(
-//                    "Something went wrong!", HttpStatus.BAD_REQUEST);
-//        }
-//        fileEntity
-//                .setType(file
-//                        .getContentType());
-//
-//        fileEntity
-//                .setName(file.getOriginalFilename());
-//
-//        fileEntity
-//                .setSize(file.getSize());
-//
-//        fileEntity
-//                .setFile(fileBytes);
-//
-//        fileEntity
-//                .setCreateDate(LocalDateTime.now());
-//
-//        fileEntity
-//                .setUpdateDate(LocalDateTime.now());
-//
-//        service
-//                .saveFile(fileEntity);
+        FileEntity fileEntity = new FileEntity();
 
-        return new ResponseEntity<>(file.getContentType(), HttpStatus.OK);
+        byte[] fileBytes;
+
+        try {
+
+            fileBytes = file.getBytes();
+
+        } catch (IOException e) {
+
+            return new ResponseEntity<>(
+                    "Something went wrong!", HttpStatus.BAD_REQUEST);
+        }
+        fileEntity
+                .setType(file
+                        .getContentType());
+
+        fileEntity
+                .setName(file.getOriginalFilename());
+
+        fileEntity
+                .setSize(file.getSize());
+
+        fileEntity
+                .setFile(fileBytes);
+
+        fileEntity
+                .setCreateDate(LocalDateTime.now());
+
+        fileEntity
+                .setUpdateDate(LocalDateTime.now());
+
+        service
+                .saveFile(fileEntity);
+
+        return new ResponseEntity<>("Content uploaded!", HttpStatus.OK);
     }
 
 
