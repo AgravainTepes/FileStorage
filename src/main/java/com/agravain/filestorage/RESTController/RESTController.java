@@ -30,7 +30,9 @@ public class RESTController {
 
     @Autowired
     public void setService(FileServiceImpl service) {
+
         this.service = service;
+
     }
 
     @PostMapping("/upload")
