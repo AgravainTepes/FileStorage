@@ -14,6 +14,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -106,7 +107,9 @@ public class RESTController {
                     .contentType(MediaType.parseMediaType("application/zip"))
                     .body(new ByteArrayResource(separator.getSerialFile()));
 
-return null;
+        return ResponseEntity
+                .ok()
+                .contentType(MediaType.parseMediaType(separator.getContentType()))
+                .body(new ByteArrayResource(separator.getSerialFile()));
     }
-
 }
