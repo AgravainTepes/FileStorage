@@ -3,7 +3,6 @@ package com.agravain.filestorage.PropertiesLoader;
 
 import com.agravain.filestorage.Exceptions.FileExceptions.PropertiesLoadFailException;
 import org.springframework.stereotype.Component;
-
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;

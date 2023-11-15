@@ -130,6 +130,9 @@ public class FileServiceImpl implements FileService {
                     singleEntity
                             .getType();
 
+            String fileName =
+                    singleEntity
+                            .getName();
 
             separator
                     .setSerialFile(serialFile);
@@ -139,6 +142,9 @@ public class FileServiceImpl implements FileService {
 
             separator
                     .setContentType(contentType);
+
+            separator
+                    .setName(fileName);
 
             return separator;
         }
@@ -171,9 +177,7 @@ public class FileServiceImpl implements FileService {
 
             return separator;
 
-        }
-
-        catch (IOException e) {
+        } catch (IOException e) {
 
             throw new ZipFailException("Compression collapsed!");
         }

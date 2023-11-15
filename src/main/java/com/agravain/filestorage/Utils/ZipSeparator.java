@@ -2,11 +2,15 @@ package com.agravain.filestorage.Utils;
 
 public class ZipSeparator {
 
-private byte [] serialFile;
+    private byte[] serialFile;
 
-private boolean isZip;
+    private boolean isZip;
 
-private String contentType;
+    private String contentType;
+
+
+
+    private String name;
 
     public String getContentType() {
 
@@ -36,5 +40,15 @@ private String contentType;
     public void setIsZip(boolean zip) {
 
         isZip = zip;
+    }
+
+    public String getName() {
+
+        return name;
+    }
+
+    public void setName(String name) {
+
+        this.name = name;
     }
 }
