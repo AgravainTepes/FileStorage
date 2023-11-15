@@ -66,15 +66,15 @@ public class FileRepositoryImpl implements FileRepository {
         for (int i = 0; i < types.size(); i++) {
             Query query = entityManager.createQuery(
                     "from FileEntity where" +
-                            "((:type1 IS NULL ) or " +
-                            "(type = :type1))  AND " +
+                            "((:type IS NULL ) or " +
+                            "(lower(type) like concat('%', :type, '%')))  AND " +
                             "((:name IS NULL) or " +
                             "(lower(name) like concat('%', :name, '%'))) AND" +
                             "((:start IS NULL) or " +
                             "(updateDate >= :start AND " +
                             "updateDate <= :end))");
 
-            query.setParameter("type1", types.get(i));
+            query.setParameter("type", types.get(i));
 
             query.setParameter("name", name);
 

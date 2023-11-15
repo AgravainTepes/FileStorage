@@ -10,9 +10,12 @@ import com.agravain.filestorage.Utils.ZipSeparator;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.format.DateTimeParseException;
 import java.util.*;
 import java.util.zip.ZipEntry;
@@ -48,11 +51,20 @@ public class FileServiceImpl implements FileService {
 
     @Transactional
     public List<FileDTO> getModelsByParams(Map<String, String[]> params) {
+
         String name = "";
 
-        LocalDateTime lowerTimeThreshold = null;
+        LocalDateTime lowerDateTimeThreshold = null;
 
-        LocalDateTime upperTimeThreshold = null;
+        LocalDate lowerDateThreshold;
+
+        LocalDateTime upperDateTimeThreshold = null;
+
+        LocalDate upperDateThreshold;
+
+        LocalTime timeStub =
+                LocalTime
+                        .of(0,0,0);
 
         List<String> types = new ArrayList<>();
 
@@ -62,14 +74,51 @@ public class FileServiceImpl implements FileService {
         if (params.containsKey("lower") && params.containsKey("upper")) {
 
             try {
-                lowerTimeThreshold = LocalDateTime.parse(params.get("lower")[0]);
-                upperTimeThreshold = LocalDateTime.parse(params.get("upper")[0]);
 
-            } catch (DateTimeParseException e) {
-                throw new IncorrectFileTimeException("Invalid time parameter!" +
-                        " Please use pattern : 2024-12-31 23:59:59");
+                lowerDateTimeThreshold =
+                        LocalDateTime
+                                .parse(params.get("lower")[0]);
+
+                upperDateTimeThreshold =
+                        LocalDateTime
+                                .parse(params.get("upper")[0]);
+
             }
+
+            catch (DateTimeParseException dateTimeParseException) {
+
+                try {
+
+                    lowerDateThreshold =
+                            LocalDate
+                                    .parse(params.get("lower")[0]);
+
+                    upperDateThreshold =
+                            LocalDate
+                                    .parse(params.get("upper")[0]);
+
+                    lowerDateTimeThreshold =
+                            LocalDateTime
+                                    .of(lowerDateThreshold, timeStub);
+
+
+                    upperDateTimeThreshold =
+                            LocalDateTime
+                                    .of(upperDateThreshold, timeStub);
+
+                }
+                catch (DateTimeParseException dateParseException) {
+
+                    throw new IncorrectFileTimeException("Invalid time parameter!" +
+                            " Please use pattern : 2024-12-31 23:59:59 " +
+                            "or without time : 2024-12-31");
+
+                }
+
+            }
+
         }
+
         if (params.containsKey("type"))
             types.addAll(Arrays.asList(params.get("type")));
 
@@ -77,7 +126,7 @@ public class FileServiceImpl implements FileService {
             types.add(null);
 
         List<FileEntity> entityList = fileRepository
-                .getModelsByParams(name, types, lowerTimeThreshold, upperTimeThreshold);
+                .getModelsByParams(name, types, lowerDateTimeThreshold, upperDateTimeThreshold);
 
         if (entityList.isEmpty())
             throw new NoSuchFileException(
