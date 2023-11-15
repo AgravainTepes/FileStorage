@@ -149,7 +149,7 @@ public class FileServiceImpl implements FileService {
 
             for (FileEntity entity : entityList) {
 
-                ZipEntry entry = new ZipEntry("/" + entity.getName());
+                ZipEntry entry = new ZipEntry(entity.getName());
 
                 entry.setSize(entity.getFile().length);
 

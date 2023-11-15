@@ -14,7 +14,6 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -37,40 +36,40 @@ public class RESTController {
     public ResponseEntity<String> uploadFile(
             @RequestBody MultipartFile file) {
 
-        FileEntity fileEntity = new FileEntity();
-
-        byte[] fileBytes;
-
-        try {
-
-            fileBytes = file.getBytes();
-
-        } catch (IOException e) {
-
-            return new ResponseEntity<>(
-                    "Something went wrong!", HttpStatus.BAD_REQUEST);
-        }
-        fileEntity
-                .setType(file
-                        .getContentType());
-
-        fileEntity
-                .setName(file.getOriginalFilename());
-
-        fileEntity
-                .setSize(file.getSize());
-
-        fileEntity
-                .setFile(fileBytes);
-
-        fileEntity
-                .setCreateDate(LocalDateTime.now());
-
-        fileEntity
-                .setUpdateDate(LocalDateTime.now());
-
-        service
-                .saveFile(fileEntity);
+//        FileEntity fileEntity = new FileEntity();
+//
+//        byte[] fileBytes;
+//
+//        try {
+//
+//            fileBytes = file.getBytes();
+//
+//        } catch (IOException e) {
+//
+//            return new ResponseEntity<>(
+//                    "Something went wrong!", HttpStatus.BAD_REQUEST);
+//        }
+//        fileEntity
+//                .setType(file
+//                        .getContentType());
+//
+//        fileEntity
+//                .setName(file.getOriginalFilename());
+//
+//        fileEntity
+//                .setSize(file.getSize());
+//
+//        fileEntity
+//                .setFile(fileBytes);
+//
+//        fileEntity
+//                .setCreateDate(LocalDateTime.now());
+//
+//        fileEntity
+//                .setUpdateDate(LocalDateTime.now());
+//
+//        service
+//                .saveFile(fileEntity);
 
         return new ResponseEntity<>(file.getContentType(), HttpStatus.OK);
     }
