@@ -79,7 +79,7 @@ public class PropertiesLoader {
 
             long longMaxSize = Long
                     .parseLong(stringMaxSize, 0,
-                            stringMaxSize.length() - 3,
+                            stringMaxSize.length() - 2,
                             10);
 
             if (stringMaxSize.endsWith("MB"))
