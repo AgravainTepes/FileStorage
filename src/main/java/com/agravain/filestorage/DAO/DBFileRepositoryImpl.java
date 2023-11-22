@@ -7,6 +7,7 @@ import com.agravain.filestorage.Exceptions.FileExceptions.NoSuchFileException;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.Query;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Repository;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -16,7 +17,8 @@ import java.util.List;
 
 
 @Repository
-public class FileRepositoryImpl implements FileRepository {
+@Profile("InDB")
+public class DBFileRepositoryImpl implements FileRepository {
 
     EntityManager entityManager;
 

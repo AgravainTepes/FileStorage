@@ -1,0 +1,46 @@
+databaseChangeLog:
+  - changeSet:
+      id: 1
+      author: agravain
+      changes:
+        - createTable:
+            tableName: files_liquibase
+            columns:
+              - column:
+                  name: id
+                  type: INT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: name
+                  type: LONGTEXT
+                  constraints:
+                    unique: true
+                    nullable: false
+              - column:
+                  name: type
+                  type: LONGTEXT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: size
+                  type: INT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: file
+                  type: MEDIUMBLOB
+                  constraints:
+                     nullable: false
+              - column:
+                  name: create_date
+                  type: DATETIME
+                  constraints:
+                    nullable: false
+              - column:
+                  name: update_date
+                  type: DATETIME
+                  constraints:
+                    nullable: false

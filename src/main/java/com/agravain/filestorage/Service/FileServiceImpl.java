@@ -1,17 +1,18 @@
 package com.agravain.filestorage.Service;
 
-import com.agravain.filestorage.DAO.FileRepositoryImpl;
+import com.agravain.filestorage.DAO.DBFileRepositoryImpl;
+
+import com.agravain.filestorage.DAO.InMemFileRepositoryImpl;
 import com.agravain.filestorage.DTO.FileDTO;
 import com.agravain.filestorage.Entity.FileEntity;
 import com.agravain.filestorage.Exceptions.FileExceptions.IncorrectFileTimeException;
 import com.agravain.filestorage.Exceptions.FileExceptions.NoSuchFileException;
 import com.agravain.filestorage.Exceptions.FileExceptions.ZipFailException;
+import com.agravain.filestorage.Exceptions.ProfileExceptions.IncorrectProfileCombinationException;
 import com.agravain.filestorage.Utils.ZipSeparator;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.ByteArrayOutputStream;
@@ -26,26 +27,51 @@ import java.util.zip.ZipOutputStream;
 
 
 @Service
+@Transactional
 public class FileServiceImpl implements FileService {
 
-    private FileRepositoryImpl fileRepository;
+    private DBFileRepositoryImpl DBFileRepository;
 
-    @Autowired
-    public void setFileRepository(FileRepositoryImpl fileRepository) {
 
-        this.fileRepository = fileRepository;
+    private InMemFileRepositoryImpl inMemFileRepository;
+
+    @Autowired(required = false)
+    public void setDBFileRepository(DBFileRepositoryImpl DBFileRepository) {
+
+        this.DBFileRepository = DBFileRepository;
     }
 
-    @Transactional
+    @Autowired(required = false)
+    public void setInMemFileRepository(InMemFileRepositoryImpl inMemFileRepository) {
+
+        this.inMemFileRepository = inMemFileRepository;
+
+    }
+
+
+
+
     public void saveFile(FileEntity fileModel) {
 
-        fileRepository.saveFile(fileModel);
+        String profile = defineProfile();
+
+        if (profile.equals("InDB"))
+            DBFileRepository.saveFile(fileModel);
+
+        inMemFileRepository.saveFile(fileModel);
     }
 
 
     public List<String> getAllFileNames() {
 
-        List<String> names = fileRepository.getAllFIleNames();
+        String profile = defineProfile();
+
+        List<String> names = new ArrayList<>();
+
+        if (profile.equals("InDB"))
+            names.addAll(DBFileRepository.getAllFIleNames());
+        names.addAll(inMemFileRepository.getAllFIleNames());
+
 
         if (names.isEmpty())
             throw new NoSuchFileException("No such files inside DB!");
@@ -54,6 +80,8 @@ public class FileServiceImpl implements FileService {
 
 
     public List<FileDTO> getModelsByParams(Map<String, String[]> params) {
+
+        String profile = defineProfile();
 
         String name = "";
 
@@ -125,8 +153,22 @@ public class FileServiceImpl implements FileService {
         if (types.isEmpty())
             types.add(null);
 
-        List<FileEntity> entityList = fileRepository
-                .getModelsByParams(name, types, lowerDateTimeThreshold, upperDateTimeThreshold);
+        List<FileEntity> entityList = new ArrayList<>();
+
+        if (profile.equals("InDB"))
+            entityList.addAll(DBFileRepository
+                    .getModelsByParams(
+                            name,
+                            types,
+                            lowerDateTimeThreshold,
+                            upperDateTimeThreshold));
+
+        entityList.addAll(inMemFileRepository
+                .getModelsByParams(
+                        name,
+                        types,
+                        lowerDateTimeThreshold,
+                        upperDateTimeThreshold));
 
         if (entityList.isEmpty())
             throw new NoSuchFileException(
@@ -146,8 +188,9 @@ public class FileServiceImpl implements FileService {
     }
 
 
-
     public ZipSeparator downloadByID(Map<String, String[]> id) {
+
+        String profile = defineProfile();
 
         List<String> StrIDList = new ArrayList<>();
 
@@ -161,7 +204,12 @@ public class FileServiceImpl implements FileService {
                 IntIDList.add(Integer.parseInt(StrID));
             }
 
-        List<FileEntity> entityList = fileRepository.getByID(IntIDList);
+        List<FileEntity> entityList = new ArrayList<>();
+
+        if (profile.equals("InDB"))
+            entityList.addAll(DBFileRepository.getByID(IntIDList));
+
+        entityList.addAll(inMemFileRepository.getByID(IntIDList));
 
         ZipSeparator separator =
                 new ZipSeparator();
@@ -233,47 +281,96 @@ public class FileServiceImpl implements FileService {
         }
     }
 
-    @Transactional
+
     public void patchFileById(int id, MultipartFile file, byte[] fileBytes) {
 
+        String profile = defineProfile();
+
         List<Integer> idForSearch = new ArrayList<>();
 
         idForSearch.add(id);
 
-        FileEntity fileEntity =
-                fileRepository
-                        .getByID(idForSearch)
-                        .get(0);
+        if (profile.equals("InDB")) {
 
-        fileEntity
-                .setUpdateDate(LocalDateTime.now());
+            FileEntity fileEntity =
+                    DBFileRepository
+                            .getByID(idForSearch)
+                            .get(0);
 
-        fileEntity
-                .setFile(fileBytes);
+            fileEntity
+                    .setUpdateDate(LocalDateTime.now());
 
-        fileEntity
-                .setType(fileEntity.getType());
+            fileEntity
+                    .setFile(fileBytes);
 
-        fileEntity
-                .setName(file.getOriginalFilename());
+            fileEntity
+                    .setType(fileEntity.getType());
 
-        fileRepository.patchFileById(fileEntity, id);
+            fileEntity
+                    .setName(file.getOriginalFilename());
+
+            DBFileRepository.patchFileById(fileEntity, id);
+        } else {
+            FileEntity fileEntity =
+                    inMemFileRepository
+                            .getByID(idForSearch)
+                            .get(0);
+
+            fileEntity
+                    .setUpdateDate(LocalDateTime.now());
+
+            fileEntity
+                    .setFile(fileBytes);
+
+            fileEntity
+                    .setType(fileEntity.getType());
+
+            fileEntity
+                    .setName(file.getOriginalFilename());
+
+            inMemFileRepository.patchFileById(fileEntity, id);
+        }
     }
 
-    @Transactional
+
     public void deleteFileById(int id) {
 
-        List<Integer> idForSearch = new ArrayList<>();
+        String profile = defineProfile();
 
-        idForSearch.add(id);
+        if (profile.equals("InDB")) {
 
-        FileEntity fileEntity =
-                fileRepository
-                        .getByID(idForSearch)
-                        .get(0);
+            List<Integer> idForSearch = new ArrayList<>();
 
-        fileRepository.deleteFileById(id);
+            idForSearch.add(id);
 
+            FileEntity fileEntity =
+                    DBFileRepository
+                            .getByID(idForSearch)
+                            .get(0);
+
+            DBFileRepository.deleteFileById(id);
+        }
+        else {
+
+            inMemFileRepository.deleteFileById(id);
+        }
+
+    }
+
+    private String defineProfile() {
+
+        if (inMemFileRepository == null && DBFileRepository == null)
+            throw new IncorrectProfileCombinationException(
+                    "Specify the launch profile!");
+
+        if (inMemFileRepository != null && DBFileRepository != null)
+            throw new IncorrectProfileCombinationException(
+                    "Remove one of the profiles!");
+
+        if (inMemFileRepository != null)
+            return "InMemory";
+
+        return "InDB";
     }
 }
 

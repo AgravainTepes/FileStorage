@@ -3,6 +3,7 @@ package com.agravain.filestorage.Entity;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Objects;
 
 @Entity
 @Table(name = "files")
@@ -79,6 +80,10 @@ public class FileEntity {
         return id;
     }
 
+    public void setId(int id) {
+        this.id = id;
+    }
+
     public LocalDateTime getCreateDate() {
 
         return createDate;
@@ -113,6 +118,14 @@ public class FileEntity {
                 LocalDateTime.parse(middleResult, formatter);
 
         return result;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        FileEntity entity = (FileEntity) o;
+        return Objects.equals(name, entity.name) && Objects.equals(type, entity.type);
     }
 
 }

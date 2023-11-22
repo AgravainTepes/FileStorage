@@ -2,6 +2,7 @@ package com.agravain.filestorage.RESTController;
 
 import com.agravain.filestorage.DTO.FileDTO;
 import com.agravain.filestorage.Entity.FileEntity;
+import com.agravain.filestorage.Exceptions.FileExceptions.NoSuchFileException;
 import com.agravain.filestorage.Service.FileServiceImpl;
 import com.agravain.filestorage.Utils.ZipSeparator;
 import jakarta.servlet.http.HttpServletRequest;
@@ -101,6 +102,9 @@ public class RESTController {
             HttpServletRequest request) {
 
         Map<String, String[]> id = request.getParameterMap();
+
+        if (id.isEmpty())
+            throw new NoSuchFileException("Indicate at least one ID!");
 
         ZipSeparator separator = service.downloadByID(id);
 
