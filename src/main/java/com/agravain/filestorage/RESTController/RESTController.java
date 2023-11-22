@@ -15,6 +15,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -50,7 +51,7 @@ public class RESTController {
         } catch (IOException e) {
 
             return new ResponseEntity<>(
-                    "Something went wrong!", HttpStatus.BAD_REQUEST);
+                    "Bytes reading failed!", HttpStatus.BAD_REQUEST);
         }
         fileEntity
                 .setType(file
@@ -115,5 +116,34 @@ public class RESTController {
                 .header(HttpHeaders.CONTENT_DISPOSITION,
                         "attachment; filename=\"" + separator.getName() + "\"")
                 .body(new ByteArrayResource(separator.getSerialFile()));
+    }
+
+    @PatchMapping("/patch/{id}")
+    public ResponseEntity<String> patchFileById(@PathVariable int id,
+                                                @RequestBody MultipartFile file) {
+
+        byte[] fileBytes;
+
+        try {
+
+            fileBytes = file.getBytes();
+
+        } catch (IOException e) {
+
+            return new ResponseEntity<>(
+                    "Bytes reading failed!", HttpStatus.BAD_REQUEST);
+        }
+
+        service.patchFileById(id, file, fileBytes);
+
+        return new ResponseEntity<>("File updated successfully!", HttpStatus.OK);
+    }
+
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<String> deleteFileById(@PathVariable int id) {
+
+        service.deleteFileById(id);
+
+        return new ResponseEntity<>("File delete successfully!", HttpStatus.OK);
     }
 }

@@ -8,6 +8,8 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
+import org.springframework.web.multipart.MultipartFile;
+
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -20,14 +22,17 @@ public class FileRepositoryImpl implements FileRepository {
 
     @Autowired
     public void setEntityManager(EntityManager entityManager) {
+
         this.entityManager =
                 entityManager;
+
     }
 
     @Override
     public void saveFile(FileEntity fileEntity) {
         Query query = entityManager
-                .createQuery("select name from FileEntity where name = :name and type = :type");
+                .createQuery("select name from FileEntity" +
+                        " where name = :name and type = :type");
 
         query.setParameter("name", fileEntity.getName());
 
@@ -38,12 +43,13 @@ public class FileRepositoryImpl implements FileRepository {
         if (!model.isEmpty())
             throw new FileIsAlreadyExistsException(
                     "FIle with this name : " +
-                    fileEntity.getName() +
-                    " and this type : " +
-                    fileEntity.getType() + " is already exists! " +
-                    " If you want to update him use PATCH METHOD!");
+                            fileEntity.getName() +
+                            " and this type : " +
+                            fileEntity.getType() + " is already exists! " +
+                            " If you want to update him use PATCH METHOD!");
 
         entityManager.merge(fileEntity);
+
     }
 
     @Override
@@ -53,6 +59,7 @@ public class FileRepositoryImpl implements FileRepository {
                 .createQuery("select name from FileEntity");
 
         return (List<String>) query.getResultList();
+
     }
 
     @Override
@@ -89,11 +96,12 @@ public class FileRepositoryImpl implements FileRepository {
 
     }
 
-    public List<FileEntity> downloadByID(List<Integer> id) {
+    public List<FileEntity> getByID(List<Integer> id) {
 
         List<FileEntity> fileEntityList = new ArrayList<>();
 
         for (Integer integer : id) {
+
 
             Query query = entityManager.createQuery(
                     "from FileEntity where id = :id");
@@ -109,6 +117,41 @@ public class FileRepositoryImpl implements FileRepository {
                     + id + " inside DB!");
 
         return fileEntityList;
+
+    }
+
+    public void patchFileById(FileEntity file, int id) {
+
+        Query query = entityManager
+                .createQuery("update FileEntity set name = :name," +
+                        " type = :type," +
+                        " size = :size," +
+                        " updateDate = :updateDate" +
+                        " where id = :id");
+
+        query.setParameter("name", file.getName());
+
+        query.setParameter("type", file.getType());
+
+        query.setParameter("size", file.getSize());
+
+        query.setParameter("updateDate", file.getUpdateDate());
+
+        query.setParameter("id", id);
+
+        query.executeUpdate();
+
+    }
+
+    public void deleteFileById(int id) {
+
+        Query query = entityManager.createQuery(
+                "delete FileEntity where id = :id");
+
+        query.setParameter("id", id);
+
+        query.executeUpdate();
+
     }
 
 

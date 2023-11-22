@@ -9,7 +9,10 @@ import com.agravain.filestorage.Exceptions.FileExceptions.ZipFailException;
 import com.agravain.filestorage.Utils.ZipSeparator;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -39,7 +42,7 @@ public class FileServiceImpl implements FileService {
         fileRepository.saveFile(fileModel);
     }
 
-    @Transactional
+
     public List<String> getAllFileNames() {
 
         List<String> names = fileRepository.getAllFIleNames();
@@ -49,7 +52,7 @@ public class FileServiceImpl implements FileService {
         return names;
     }
 
-    @Transactional
+
     public List<FileDTO> getModelsByParams(Map<String, String[]> params) {
 
         String name = "";
@@ -64,7 +67,7 @@ public class FileServiceImpl implements FileService {
 
         LocalTime timeStub =
                 LocalTime
-                        .of(0,0,0);
+                        .of(0, 0, 0);
 
         List<String> types = new ArrayList<>();
 
@@ -83,9 +86,7 @@ public class FileServiceImpl implements FileService {
                         LocalDateTime
                                 .parse(params.get("upper")[0]);
 
-            }
-
-            catch (DateTimeParseException dateTimeParseException) {
+            } catch (DateTimeParseException dateTimeParseException) {
 
                 try {
 
@@ -106,8 +107,7 @@ public class FileServiceImpl implements FileService {
                             LocalDateTime
                                     .of(upperDateThreshold, timeStub);
 
-                }
-                catch (DateTimeParseException dateParseException) {
+                } catch (DateTimeParseException dateParseException) {
 
                     throw new IncorrectFileTimeException("Invalid time parameter!" +
                             " Please use pattern : 2024-12-31 23:59:59 " +
@@ -145,6 +145,8 @@ public class FileServiceImpl implements FileService {
         return fileDTOS;
     }
 
+
+
     public ZipSeparator downloadByID(Map<String, String[]> id) {
 
         List<String> StrIDList = new ArrayList<>();
@@ -159,7 +161,7 @@ public class FileServiceImpl implements FileService {
                 IntIDList.add(Integer.parseInt(StrID));
             }
 
-        List<FileEntity> entityList = fileRepository.downloadByID(IntIDList);
+        List<FileEntity> entityList = fileRepository.getByID(IntIDList);
 
         ZipSeparator separator =
                 new ZipSeparator();
@@ -229,6 +231,49 @@ public class FileServiceImpl implements FileService {
 
             throw new ZipFailException("Compression collapsed!");
         }
+    }
+
+    @Transactional
+    public void patchFileById(int id, MultipartFile file, byte[] fileBytes) {
+
+        List<Integer> idForSearch = new ArrayList<>();
+
+        idForSearch.add(id);
+
+        FileEntity fileEntity =
+                fileRepository
+                        .getByID(idForSearch)
+                        .get(0);
+
+        fileEntity
+                .setUpdateDate(LocalDateTime.now());
+
+        fileEntity
+                .setFile(fileBytes);
+
+        fileEntity
+                .setType(fileEntity.getType());
+
+        fileEntity
+                .setName(file.getOriginalFilename());
+
+        fileRepository.patchFileById(fileEntity, id);
+    }
+
+    @Transactional
+    public void deleteFileById(int id) {
+
+        List<Integer> idForSearch = new ArrayList<>();
+
+        idForSearch.add(id);
+
+        FileEntity fileEntity =
+                fileRepository
+                        .getByID(idForSearch)
+                        .get(0);
+
+        fileRepository.deleteFileById(id);
+
     }
 }
 

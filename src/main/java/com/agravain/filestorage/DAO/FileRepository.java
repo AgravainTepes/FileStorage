@@ -16,5 +16,9 @@ public interface FileRepository {
                                        LocalDateTime lower,
                                        LocalDateTime upper);
 
-    List<FileEntity> downloadByID(List<Integer> id);
+    List<FileEntity> getByID(List<Integer> id);
+
+    void patchFileById(FileEntity file, int id);
+
+    void deleteFileById(int id);
 }
