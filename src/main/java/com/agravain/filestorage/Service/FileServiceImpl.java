@@ -268,12 +268,12 @@ public class FileServiceImpl implements FileService {
 
             ZipSeparator zipSeparator =
                     new ZipSeparator();
-            separator
+            zipSeparator
                     .setSerialFile(bos.toByteArray());
-            separator
+            zipSeparator
                     .setIsZip(true);
 
-            return separator;
+            return zipSeparator;
 
         } catch (IOException e) {
 

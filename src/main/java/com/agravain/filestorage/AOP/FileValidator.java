@@ -3,7 +3,6 @@ package com.agravain.filestorage.AOP;
 import com.agravain.filestorage.Exceptions.FileExceptions.IncorrectFileNameException;
 import com.agravain.filestorage.Exceptions.FileExceptions.IncorrectFileSizeException;
 import com.agravain.filestorage.Exceptions.FileExceptions.IncorrectFileTypeException;
-import com.agravain.filestorage.Exceptions.FileExceptions.NoSuchFileException;
 import com.agravain.filestorage.PropertiesLoader.PropertiesLoader;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.Aspect;
@@ -11,8 +10,10 @@ import org.aspectj.lang.annotation.Before;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
+
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 
 @Aspect
 @Component
@@ -39,7 +40,7 @@ public class FileValidator {
                     "File too fat! Max size = " + props.getMaxSize() + " bytes. " +
                             "Yours file size = " + file.getSize());
 
-        if (file.getOriginalFilename().contains(".."))
+        if (Objects.requireNonNull(file.getOriginalFilename()).contains(".."))
             throw new IncorrectFileNameException("Incorrect file name!");
 
         if (!fileTypes.contains(file.getContentType()))

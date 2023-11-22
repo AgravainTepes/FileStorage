@@ -47,16 +47,12 @@ public class InMemFileRepositoryImpl implements FileRepository {
 
         List<String> names = new ArrayList<>();
 
-        if (!fileEntityMap.isEmpty()) {
+        List<FileEntity> entities =
+                fileEntityMap.values().stream().toList();
 
-            List<FileEntity> entities =
-                    fileEntityMap.values().stream().toList();
+        for (FileEntity entity : entities) {
 
-            for (FileEntity entity : entities) {
-
-                names.add(entity.getName());
-
-            }
+            names.add(entity.getName());
 
         }
 

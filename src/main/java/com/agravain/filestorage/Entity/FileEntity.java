@@ -6,7 +6,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.Objects;
 
 @Entity
-@Table(name = "files")
+@Table(name = "files_liquibase")
 public class FileEntity {
 
     public FileEntity() {
@@ -114,10 +114,7 @@ public class FileEntity {
         String middleResult =
                 reference.format(formatter);
 
-        LocalDateTime result =
-                LocalDateTime.parse(middleResult, formatter);
-
-        return result;
+        return LocalDateTime.parse(middleResult, formatter);
     }
 
     @Override

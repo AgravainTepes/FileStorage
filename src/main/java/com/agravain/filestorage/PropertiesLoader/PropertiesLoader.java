@@ -18,11 +18,8 @@ public class PropertiesLoader {
         this.typeList =
                 loadTypesList(properties);
         this.maxSize =
-                loadMaxSize(properties, "max.file.size");
+                loadMaxSize(properties);
     }
-
-    private static String propertiesPath =
-            "src/main/resources/FileTypesAndSize.properties";
 
     private final List<String> typeList;
 
@@ -36,8 +33,10 @@ public class PropertiesLoader {
         Properties properties = new Properties();
 
         try {
-            properties.load(new FileInputStream(propertiesPath));
-        } catch (IOException e) {
+            properties.load(new FileInputStream(
+                    "src/main/resources/FileTypesAndSize.properties"));
+        }
+        catch (IOException e) {
 
             throw new
                     PropertiesLoadFailException("Properties loading collapsed!");
@@ -68,11 +67,11 @@ public class PropertiesLoader {
     }
 
 
-    private static long loadMaxSize(Properties properties, String key) {
+    private static long loadMaxSize(Properties properties) {
 
-        String stringMaxSize = properties.getProperty(key);
+        String stringMaxSize = properties.getProperty("max.file.size");
 
-        Long result = 0L;
+        long result = 0L;
 
         if (stringMaxSize.length() >= 3 && stringMaxSize.endsWith("MB")
                 || stringMaxSize.endsWith("KB")) {

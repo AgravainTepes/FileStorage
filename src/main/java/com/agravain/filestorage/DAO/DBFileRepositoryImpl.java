@@ -1,15 +1,14 @@
 package com.agravain.filestorage.DAO;
 
 
-import com.agravain.filestorage.Exceptions.FileExceptions.FileIsAlreadyExistsException;
 import com.agravain.filestorage.Entity.FileEntity;
+import com.agravain.filestorage.Exceptions.FileExceptions.FileIsAlreadyExistsException;
 import com.agravain.filestorage.Exceptions.FileExceptions.NoSuchFileException;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Repository;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -72,7 +71,7 @@ public class DBFileRepositoryImpl implements FileRepository {
 
         List<FileEntity> files = new ArrayList<>();
 
-        for (int i = 0; i < types.size(); i++) {
+        for (String type : types) {
             Query query = entityManager.createQuery(
                     "from FileEntity where" +
                             "((:type IS NULL ) or " +
@@ -83,7 +82,7 @@ public class DBFileRepositoryImpl implements FileRepository {
                             "(updateDate >= :start AND " +
                             "updateDate <= :end))");
 
-            query.setParameter("type", types.get(i));
+            query.setParameter("type", type);
 
             query.setParameter("name", name);
 
@@ -108,7 +107,7 @@ public class DBFileRepositoryImpl implements FileRepository {
             Query query = entityManager.createQuery(
                     "from FileEntity where id = :id");
 
-            query.setParameter("id", integer.intValue());
+            query.setParameter("id", integer);
 
             fileEntityList.addAll(query.getResultList());
 
