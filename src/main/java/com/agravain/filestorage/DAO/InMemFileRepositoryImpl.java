@@ -19,7 +19,7 @@ public class InMemFileRepositoryImpl implements FileRepository {
     private int currentID = 0;
 
     @Override
-    public void saveFile(FileEntity fileEntity) {
+    public String saveFile(FileEntity fileEntity) {
 
         if (fileEntityMap == null)
             fileEntityMap = new HashMap<>();
@@ -37,6 +37,8 @@ public class InMemFileRepositoryImpl implements FileRepository {
         fileEntityMap.putIfAbsent(currentID, fileEntity);
 
         currentID++;
+
+        return "Content uploaded!";
     }
 
     @Override

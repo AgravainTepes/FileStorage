@@ -49,16 +49,41 @@ public class FileServiceImpl implements FileService {
     }
 
 
-
-
-    public void saveFile(FileEntity fileModel) {
+    public String saveFile(MultipartFile file, byte[] fileBytes) {
 
         String profile = defineProfile();
 
-        if (profile.equals("InDB"))
-            DBFileRepository.saveFile(fileModel);
+        String result = "";
 
-        inMemFileRepository.saveFile(fileModel);
+        FileEntity fileEntity = new FileEntity();
+
+        fileEntity
+                .setType(file
+                        .getContentType());
+
+        fileEntity
+                .setName(file.getOriginalFilename());
+
+        fileEntity
+                .setSize(file.getSize());
+
+        fileEntity
+                .setFile(fileBytes);
+
+        fileEntity
+                .setCreateDate(LocalDateTime.now());
+
+        fileEntity
+                .setUpdateDate(LocalDateTime.now());
+
+        if (profile.equals("InDB"))
+            result =
+                    DBFileRepository.saveFile(fileEntity);
+
+        result =
+                inMemFileRepository.saveFile(fileEntity);
+
+        return result;
     }
 
 
@@ -349,8 +374,7 @@ public class FileServiceImpl implements FileService {
                             .get(0);
 
             DBFileRepository.deleteFileById(id);
-        }
-        else {
+        } else {
 
             inMemFileRepository.deleteFileById(id);
         }

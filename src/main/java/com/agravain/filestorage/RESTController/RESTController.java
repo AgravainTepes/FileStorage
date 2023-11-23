@@ -41,8 +41,6 @@ public class RESTController {
     public ResponseEntity<String> uploadFile(
             @RequestBody MultipartFile file) {
 
-        FileEntity fileEntity = new FileEntity();
-
         byte[] fileBytes;
 
         try {
@@ -54,29 +52,11 @@ public class RESTController {
             return new ResponseEntity<>(
                     "Bytes reading failed!", HttpStatus.BAD_REQUEST);
         }
-        fileEntity
-                .setType(file
-                        .getContentType());
 
-        fileEntity
-                .setName(file.getOriginalFilename());
+        String result =
+                service.saveFile(file, fileBytes);
 
-        fileEntity
-                .setSize(file.getSize());
-
-        fileEntity
-                .setFile(fileBytes);
-
-        fileEntity
-                .setCreateDate(LocalDateTime.now());
-
-        fileEntity
-                .setUpdateDate(LocalDateTime.now());
-
-        service
-                .saveFile(fileEntity);
-
-        return new ResponseEntity<>("Content uploaded!", HttpStatus.OK);
+        return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
 

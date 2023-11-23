@@ -30,7 +30,7 @@ public class DBFileRepositoryImpl implements FileRepository {
     }
 
     @Override
-    public void saveFile(FileEntity fileEntity) {
+    public String saveFile(FileEntity fileEntity) {
         Query query = entityManager
                 .createQuery("select name from FileEntity" +
                         " where name = :name and type = :type");
@@ -51,6 +51,7 @@ public class DBFileRepositoryImpl implements FileRepository {
 
         entityManager.merge(fileEntity);
 
+        return "Content uploaded!";
     }
 
     @Override

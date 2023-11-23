@@ -10,7 +10,7 @@ import java.util.Map;
 
 public interface FileService {
 
-     void saveFile(FileEntity fileEntity);
+     String saveFile(MultipartFile file, byte[] fileBytes);
 
      List<String> getAllFileNames();
 

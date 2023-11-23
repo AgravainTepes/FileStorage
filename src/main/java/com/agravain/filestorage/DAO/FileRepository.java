@@ -7,7 +7,7 @@ import java.util.List;
 
 public interface FileRepository {
 
-    void saveFile(FileEntity fileEntity);
+    String saveFile(FileEntity fileEntity);
 
     List<String> getAllFIleNames();
 
