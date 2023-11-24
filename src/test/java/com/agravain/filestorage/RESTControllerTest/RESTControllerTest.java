@@ -14,10 +14,13 @@ import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 
 @ExtendWith(MockitoExtension.class)
@@ -60,7 +63,28 @@ class RESTControllerTest {
                         .isOk())
                 .andExpect(content()
                         .string("Content uploaded!"));
-
     }
+
+    @Test
+    @DisplayName("GET /api/names возвращает HTTP-ответ со статусом 200 OK" +
+            " и списком имён файлов.")
+    void handleGetAllFileNames_ReturnsNotEmptyList() throws Exception {
+
+        List<String> names = new ArrayList<>();
+        names.add("testName");
+        names.add("testName");
+        names.add("testName");
+        names.add("testName");
+
+        when(fileService.getAllFileNames())
+                .thenReturn(names);
+
+
+        mockMvc.perform(get("/api/names"))
+                .andExpect(status()
+                        .isOk())
+                .andExpect(content().json(names.toString()));
+    }
+
 
 }
