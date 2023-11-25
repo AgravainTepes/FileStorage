@@ -1,7 +1,6 @@
 package com.agravain.filestorage.Service;
 
 import com.agravain.filestorage.DTO.FileDTO;
-import com.agravain.filestorage.Entity.FileEntity;
 import com.agravain.filestorage.Utils.ZipSeparator;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -21,7 +20,5 @@ public interface FileService {
     String patchFileById(int id, MultipartFile file, byte[] fileBytes);
 
     String deleteFileById(int id);
-
-    String defineProfile();
 
 }

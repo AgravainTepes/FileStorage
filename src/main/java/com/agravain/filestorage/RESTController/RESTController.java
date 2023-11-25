@@ -57,6 +57,7 @@ public class RESTController {
                 service.saveFile(file, fileBytes);
 
         return new ResponseEntity<>(responseMessage, HttpStatus.OK);
+
     }
 
 
@@ -64,6 +65,7 @@ public class RESTController {
     public ResponseEntity<List<String>> getAllFileNames() {
         List<String> names = service.getAllFileNames();
         return new ResponseEntity<>(names, HttpStatus.OK);
+
     }
 
     @GetMapping("/filtered")
@@ -75,6 +77,7 @@ public class RESTController {
         List<FileDTO> fileModels = service.getModelsByParams(params);
 
         return new ResponseEntity<>(fileModels, HttpStatus.OK);
+
     }
 
     @GetMapping("/download")
@@ -100,6 +103,7 @@ public class RESTController {
                 .header(HttpHeaders.CONTENT_DISPOSITION,
                         "attachment; filename=\"" + separator.getName() + "\"")
                 .body(new ByteArrayResource(separator.getSerialFile()));
+
     }
 
     @PatchMapping("/patch/{id}")
@@ -122,6 +126,7 @@ public class RESTController {
                 service.patchFileById(id, file, fileBytes);
 
         return new ResponseEntity<>(responseMessage, HttpStatus.OK);
+
     }
 
     @DeleteMapping("/delete/{id}")
@@ -131,5 +136,6 @@ public class RESTController {
                 service.deleteFileById(id);
 
         return new ResponseEntity<>(responseMessage, HttpStatus.OK);
+
     }
 }

@@ -24,18 +24,21 @@ public class FileDTO {
     public int getId() {
 
         return id;
+
     }
 
 
     public void setId(int id) {
 
         this.id = id;
+
     }
 
 
     public String getName() {
 
         return name;
+
     }
 
 
@@ -44,12 +47,14 @@ public class FileDTO {
         this.name = name;
 
         return this;
+
     }
 
 
     public String getType() {
 
         return type;
+
     }
 
 
@@ -58,12 +63,14 @@ public class FileDTO {
         this.type = type;
 
         return this;
+
     }
 
 
     public long getSize() {
 
         return size;
+
     }
 
 
@@ -72,11 +79,13 @@ public class FileDTO {
         this.size = size;
 
         return this;
+
     }
 
     public LocalDateTime getCreateDate() {
 
         return createDate;
+
     }
 
 
@@ -87,11 +96,13 @@ public class FileDTO {
                 createDate;
 
         return this;
+
     }
 
     public LocalDateTime getUpdateDate() {
 
         return updateDate;
+
     }
 
 
@@ -101,11 +112,13 @@ public class FileDTO {
                 updateDate;
 
         return this;
+
     }
 
     public String getDownloadURL() {
 
         return downloadURL;
+
     }
 
 
@@ -115,6 +128,7 @@ public class FileDTO {
                 downloadURL;
 
         return this;
+
     }
 
     public void entityToDTO(FileEntity model) {
@@ -139,6 +153,7 @@ public class FileDTO {
 
         this.downloadURL =
                 "/api/download?id=" + model.getId();
+
     }
 
 }

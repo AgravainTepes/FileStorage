@@ -14,11 +14,15 @@ import java.util.Set;
 public class PropertiesLoader {
 
     public PropertiesLoader() {
+
         Properties properties = loadProperties();
+
         this.typeList =
                 loadTypesList(properties);
+
         this.maxSize =
                 loadMaxSize(properties);
+
     }
 
     private final List<String> typeList;
@@ -30,18 +34,24 @@ public class PropertiesLoader {
     private final long maxSize;
 
     private static Properties loadProperties() {
+
         Properties properties = new Properties();
 
         try {
+
             properties.load(new FileInputStream(
                     "src/main/resources/FileTypesAndSize.properties"));
+
         }
         catch (IOException e) {
 
             throw new
                     PropertiesLoadFailException("Properties loading collapsed!");
+
         }
+
         return properties;
+
     }
 
     private static List<String> loadTypesList(Properties properties) {
@@ -61,9 +71,11 @@ public class PropertiesLoader {
                 typesList
                         .add(contentType);
             }
+
         }
 
         return typesList;
+
     }
 
 
@@ -86,17 +98,22 @@ public class PropertiesLoader {
 
             if (stringMaxSize.endsWith("KB"))
                 result = longMaxSize * kilobyteToByte;
+
         }
+
         return result;
+
     }
 
     public long getMaxSize() {
 
         return maxSize;
+
     }
 
     public List<String> getTypeList() {
 
         return typeList;
+
     }
 }

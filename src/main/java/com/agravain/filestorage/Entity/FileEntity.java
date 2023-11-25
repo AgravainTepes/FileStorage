@@ -39,6 +39,7 @@ public class FileEntity {
     public long getSize() {
 
         return size;
+
     }
 
     public FileEntity setSize(long size) {
@@ -46,16 +47,19 @@ public class FileEntity {
         this.size = size;
 
         return this;
+
     }
 
     public String getName() {
 
         return name;
+
     }
 
     public byte[] getFile() {
 
         return file;
+
     }
 
     public FileEntity setFile(byte[] file) {
@@ -63,11 +67,13 @@ public class FileEntity {
         this.file = file;
 
         return this;
+
     }
 
     public String getType() {
 
         return type;
+
     }
 
     public FileEntity setName(String name) {
@@ -75,6 +81,7 @@ public class FileEntity {
         this.name = name;
 
         return this;
+
     }
 
     public FileEntity setType(String type) {
@@ -82,20 +89,25 @@ public class FileEntity {
         this.type = type;
 
         return this;
+
     }
 
     public int getId() {
 
         return id;
+
     }
 
     public void setId(int id) {
+
         this.id = id;
+
     }
 
     public LocalDateTime getCreateDate() {
 
         return createDate;
+
     }
 
     public FileEntity setCreateDate(LocalDateTime createDate) {
@@ -104,11 +116,13 @@ public class FileEntity {
                 formatLocalDateTime(createDate);
 
         return this;
+
     }
 
     public LocalDateTime getUpdateDate() {
 
         return updateDate;
+
     }
 
     public FileEntity setUpdateDate(LocalDateTime updateDate) {
@@ -117,6 +131,7 @@ public class FileEntity {
                 formatLocalDateTime(updateDate);
 
         return this;
+
     }
 
     public LocalDateTime formatLocalDateTime(LocalDateTime reference) {
@@ -128,14 +143,7 @@ public class FileEntity {
                 reference.format(formatter);
 
         return LocalDateTime.parse(middleResult, formatter);
-    }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        FileEntity entity = (FileEntity) o;
-        return Objects.equals(name, entity.name) && Objects.equals(type, entity.type);
     }
 
 }
