@@ -126,6 +126,18 @@ public class DBFileRepositoryImpl implements FileRepository {
 
     public String patchFileById(FileEntity file, int id) {
 
+        Query checkQuery = entityManager.createQuery(
+                "from FileEntity where id = :id");
+
+        checkQuery.setParameter("id", id);
+
+        List<FileEntity> checkEntity =
+                (List<FileEntity>) checkQuery.getResultList().get(0);
+
+        if (checkEntity.isEmpty())
+            throw new NoSuchFileException("No such file with id: "
+                    + id + " inside DB!");
+
         Query query = entityManager
                 .createQuery("update FileEntity set name = :name," +
                         " type = :type," +
@@ -150,6 +162,18 @@ public class DBFileRepositoryImpl implements FileRepository {
     }
 
     public String deleteFileById(int id) {
+
+        Query checkQuery = entityManager.createQuery(
+                "from FileEntity where id = :id");
+
+        checkQuery.setParameter("id", id);
+
+        List<FileEntity> checkEntity =
+                (List<FileEntity>) checkQuery.getResultList().get(0);
+
+        if (checkEntity.isEmpty())
+            throw new NoSuchFileException("No such file with id: "
+                    + id + " inside DB!");
 
         Query query = entityManager.createQuery(
                 "delete FileEntity where id = :id");

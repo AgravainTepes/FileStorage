@@ -252,7 +252,7 @@ public class RESTController {
         } catch (IOException e) {
 
             return new ResponseEntity<>(
-                    "Bytes reading failed!", HttpStatus.BAD_REQUEST);
+                    "Bytes reading failed!", HttpStatus.NOT_FOUND);
         }
 
         String responseMessage =
