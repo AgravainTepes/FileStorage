@@ -17,9 +17,11 @@ public class ZipSeparator {
         return contentType;
     }
 
-    public void setContentType(String contentType) {
+    public ZipSeparator setContentType(String contentType) {
 
         this.contentType = contentType;
+
+        return this;
     }
 
     public byte[] getSerialFile() {
@@ -27,9 +29,11 @@ public class ZipSeparator {
         return serialFile;
     }
 
-    public void setSerialFile(byte[] serialFile) {
+    public ZipSeparator setSerialFile(byte[] serialFile) {
 
         this.serialFile = serialFile;
+
+        return this;
     }
 
     public boolean isZip() {
@@ -37,9 +41,11 @@ public class ZipSeparator {
         return isZip;
     }
 
-    public void setIsZip(boolean zip) {
+    public ZipSeparator setIsZip(boolean zip) {
 
         isZip = zip;
+
+        return this;
     }
 
     public String getName() {
@@ -47,8 +53,10 @@ public class ZipSeparator {
         return name;
     }
 
-    public void setName(String name) {
+    public ZipSeparator setName(String name) {
 
         this.name = name;
+
+        return this;
     }
 }
