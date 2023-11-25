@@ -32,16 +32,6 @@ public class FileServiceImplTest {
     @InjectMocks
     private FileServiceImpl fileService;
 
-
-    private MockMvc mockMvc;
-
-    @BeforeEach
-    void setUp() {
-
-        mockMvc = MockMvcBuilders.standaloneSetup(fileService).build();
-
-    }
-
     @Test
     @DisplayName("Создаёт Entity и передаёт его репозиторию." +
             " Возвращает сообщение об успешном выполнении.")

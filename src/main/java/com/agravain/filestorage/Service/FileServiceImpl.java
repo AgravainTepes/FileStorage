@@ -57,9 +57,8 @@ public class FileServiceImpl implements FileService {
 
     public List<String> getAllFileNames() {
 
-        List<String> names = new ArrayList<>();
-
-        names.addAll(fileRepository.getAllFIleNames());
+        List<String> names =
+                new ArrayList<>(fileRepository.getAllFIleNames());
 
         if (names.isEmpty())
             throw new NoSuchFileException("No such files inside DB!");
@@ -143,9 +142,8 @@ public class FileServiceImpl implements FileService {
         if (types.isEmpty())
             types.add(null);
 
-        List<FileEntity> entityList = new ArrayList<>();
-
-        entityList.addAll(fileRepository
+        List<FileEntity> entityList =
+                new ArrayList<>(fileRepository
                 .getModelsByParams(
                         name,
                         types,
@@ -190,9 +188,8 @@ public class FileServiceImpl implements FileService {
 
             }
 
-        List<FileEntity> entityList = new ArrayList<>();
-
-        entityList.addAll(fileRepository.getByID(IntIDList));
+        List<FileEntity> entityList =
+                new ArrayList<>(fileRepository.getByID(IntIDList));
 
         if (entityList.size() == 1) {
 
