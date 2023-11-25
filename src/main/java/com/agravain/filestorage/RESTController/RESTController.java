@@ -205,7 +205,7 @@ public class RESTController {
 
     }
 
-    @PatchMapping("/patch/{id}")
+    @PatchMapping(value = "/patch/{id}",consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
     @Operation(summary = "Обновление файла c указанным Id")
 
     @ApiResponse(responseCode = "200",
@@ -259,10 +259,10 @@ public class RESTController {
             description = "File delete successfully!")
 
     @ApiResponse(responseCode = "404",
-            description = "No such files with id 0 inside DB ",
+            description = "No such file with id 0 inside DB ",
             content = {@Content(
                     schema = @Schema(defaultValue = "info" + ":" +
-                            " No such files with id 0 inside DB!"),
+                            " No such file with id 0 inside DB!"),
                     mediaType = "application/json")})
 
     public ResponseEntity<String> deleteFileById(
