@@ -55,25 +55,12 @@ public class FileServiceImpl implements FileService {
 
         String responseMessage = "";
 
-        FileEntity fileEntity = new FileEntity();
-
-        fileEntity
-                .setType(file
-                        .getContentType());
-
-        fileEntity
-                .setName(file.getOriginalFilename());
-
-        fileEntity
-                .setSize(file.getSize());
-
-        fileEntity
-                .setFile(fileBytes);
-
-        fileEntity
-                .setCreateDate(LocalDateTime.now());
-
-        fileEntity
+        FileEntity fileEntity = new FileEntity()
+                .setType(file.getContentType())
+                .setName(file.getOriginalFilename())
+                .setSize(file.getSize())
+                .setFile(fileBytes)
+                .setCreateDate(LocalDateTime.now())
                 .setUpdateDate(LocalDateTime.now());
 
         if (profile.equals("InDB"))
@@ -322,19 +309,11 @@ public class FileServiceImpl implements FileService {
             FileEntity fileEntity =
                     DBFileRepository
                             .getByID(idForSearch)
-                            .get(0);
-
-            fileEntity
-                    .setUpdateDate(LocalDateTime.now());
-
-            fileEntity
-                    .setFile(fileBytes);
-
-            fileEntity
-                    .setType(fileEntity.getType());
-
-            fileEntity
-                    .setName(file.getOriginalFilename());
+                            .get(0)
+                            .setUpdateDate(LocalDateTime.now())
+                            .setFile(fileBytes)
+                            .setType(file.getContentType())
+                            .setName(file.getOriginalFilename());
 
             responseMessage =
                     DBFileRepository.patchFileById(fileEntity, id);
@@ -343,19 +322,11 @@ public class FileServiceImpl implements FileService {
             FileEntity fileEntity =
                     inMemFileRepository
                             .getByID(idForSearch)
-                            .get(0);
-
-            fileEntity
-                    .setUpdateDate(LocalDateTime.now());
-
-            fileEntity
-                    .setFile(fileBytes);
-
-            fileEntity
-                    .setType(fileEntity.getType());
-
-            fileEntity
-                    .setName(file.getOriginalFilename());
+                            .get(0)
+                            .setUpdateDate(LocalDateTime.now())
+                            .setFile(fileBytes)
+                            .setType(file.getContentType())
+                            .setName(file.getOriginalFilename());
 
             responseMessage =
                     inMemFileRepository.patchFileById(fileEntity, id);

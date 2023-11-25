@@ -39,7 +39,7 @@ class RESTControllerTest {
     private MockMvc mockMvc;
 
     @BeforeEach
-    void seUp() {
+    void setUp() {
 
         mockMvc = MockMvcBuilders.standaloneSetup(controller).build();
 

@@ -1,6 +1,7 @@
 package com.agravain.filestorage.Entity;
 
 import jakarta.persistence.*;
+
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Objects;
@@ -40,9 +41,11 @@ public class FileEntity {
         return size;
     }
 
-    public void setSize(long size) {
+    public FileEntity setSize(long size) {
 
         this.size = size;
+
+        return this;
     }
 
     public String getName() {
@@ -55,9 +58,11 @@ public class FileEntity {
         return file;
     }
 
-    public void setFile(byte[] file) {
+    public FileEntity setFile(byte[] file) {
 
         this.file = file;
+
+        return this;
     }
 
     public String getType() {
@@ -65,14 +70,18 @@ public class FileEntity {
         return type;
     }
 
-    public void setName(String name) {
+    public FileEntity setName(String name) {
 
         this.name = name;
+
+        return this;
     }
 
-    public void setType(String type) {
+    public FileEntity setType(String type) {
 
         this.type = type;
+
+        return this;
     }
 
     public int getId() {
@@ -89,10 +98,12 @@ public class FileEntity {
         return createDate;
     }
 
-    public void setCreateDate(LocalDateTime createDate) {
+    public FileEntity setCreateDate(LocalDateTime createDate) {
 
         this.createDate =
                 formatLocalDateTime(createDate);
+
+        return this;
     }
 
     public LocalDateTime getUpdateDate() {
@@ -100,10 +111,12 @@ public class FileEntity {
         return updateDate;
     }
 
-    public void setUpdateDate(LocalDateTime updateDate) {
+    public FileEntity setUpdateDate(LocalDateTime updateDate) {
 
         this.updateDate =
                 formatLocalDateTime(updateDate);
+
+        return this;
     }
 
     public LocalDateTime formatLocalDateTime(LocalDateTime reference) {
