@@ -39,9 +39,11 @@ public class FileDTO {
     }
 
 
-    public void setName(String name) {
+    public FileDTO setName(String name) {
 
         this.name = name;
+
+        return this;
     }
 
 
@@ -51,9 +53,11 @@ public class FileDTO {
     }
 
 
-    public void setType(String type) {
+    public FileDTO setType(String type) {
 
         this.type = type;
+
+        return this;
     }
 
 
@@ -63,9 +67,11 @@ public class FileDTO {
     }
 
 
-    public void setSize(int size) {
+    public FileDTO setSize(int size) {
 
         this.size = size;
+
+        return this;
     }
 
     public LocalDateTime getCreateDate() {
@@ -75,10 +81,12 @@ public class FileDTO {
 
 
 
-    public void setCreateDate(LocalDateTime createDate) {
+    public FileDTO setCreateDate(LocalDateTime createDate) {
 
         this.createDate =
                 createDate;
+
+        return this;
     }
 
     public LocalDateTime getUpdateDate() {
@@ -87,10 +95,12 @@ public class FileDTO {
     }
 
 
-    public void setUpdateDate(LocalDateTime updateDate) {
+    public FileDTO setUpdateDate(LocalDateTime updateDate) {
 
         this.updateDate =
                 updateDate;
+
+        return this;
     }
 
     public String getDownloadURL() {
@@ -99,10 +109,12 @@ public class FileDTO {
     }
 
 
-    public void setDownloadURL(String downloadURL) {
+    public FileDTO setDownloadURL(String downloadURL) {
 
         this.downloadURL =
                 downloadURL;
+
+        return this;
     }
 
     public void entityToDTO(FileEntity model) {
