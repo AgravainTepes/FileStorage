@@ -156,7 +156,9 @@ public class RESTController {
     }
 
     @GetMapping(value = "/download", produces = MediaType.ALL_VALUE)
-    @Operation(summary = "Скачивание одного файла или нескольких архивом")
+    @Operation(summary = "Скачивание одного файла или нескольких архивом." +
+            " Поле archiveName никак не влияет на одиночный файл." +
+            " Даже для архива оно опционально.")
 
     @ApiResponse(responseCode = "200",
             description = "Content downloaded!",
@@ -179,7 +181,10 @@ public class RESTController {
     public ResponseEntity<Resource> downloadFilesByID(
             @RequestParam
             @PathVariable int[] id,
-            HttpServletRequest request) {
+            @RequestParam(defaultValue = "nameless", required = false)
+            String archiveName,
+            HttpServletRequest request
+    ) {
 
         Map<String, String[]> idMap = request.getParameterMap();
 
@@ -188,24 +193,30 @@ public class RESTController {
 
         ZipSeparator separator = service.downloadByID(idMap);
 
-        if (separator.isZip())
+        if (separator.isZip()) {
+
+            if (archiveName != null && !archiveName.isEmpty())
+                separator.setName(archiveName);
+
             return ResponseEntity
                     .ok()
                     .header(HttpHeaders.CONTENT_DISPOSITION,
-                            "attachment; " + separator.getName())
+                            "attachment; filename=" + separator.getName())
                     .contentType(MediaType.parseMediaType(separator.getContentType()))
                     .body(new ByteArrayResource(separator.getSerialFile()));
+
+        }
 
         return ResponseEntity
                 .ok()
                 .header(HttpHeaders.CONTENT_DISPOSITION,
-                        "attachment; " + separator.getName())
+                        "attachment; filename=" + separator.getName())
                 .contentType(MediaType.parseMediaType(separator.getContentType()))
                 .body(new ByteArrayResource(separator.getSerialFile()));
 
     }
 
-    @PatchMapping(value = "/patch/{id}",consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
+    @PatchMapping(value = "/patch/{id}", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
     @Operation(summary = "Обновление файла c указанным Id")
 
     @ApiResponse(responseCode = "200",
@@ -228,9 +239,8 @@ public class RESTController {
                     mediaType = "application/json")})
 
     public ResponseEntity<String> patchFileById(
-            @Parameter
+            @RequestParam
             @PathVariable int id,
-            @Parameter
             @RequestBody MultipartFile file) {
 
         byte[] fileBytes;
@@ -266,7 +276,7 @@ public class RESTController {
                     mediaType = "application/json")})
 
     public ResponseEntity<String> deleteFileById(
-            @Parameter
+            @RequestParam
             @PathVariable int id) {
 
         String responseMessage =

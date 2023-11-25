@@ -14,6 +14,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -219,7 +220,7 @@ public class FileServiceImpl implements FileService {
 
 
         try (ByteArrayOutputStream bos = new ByteArrayOutputStream();
-             ZipOutputStream zop = new ZipOutputStream(bos)) {
+             ZipOutputStream zop = new ZipOutputStream(bos, Charset.defaultCharset())) {
 
             for (FileEntity entity : entityList) {
 
@@ -240,7 +241,7 @@ public class FileServiceImpl implements FileService {
             return new ZipSeparator()
                     .setSerialFile(bos.toByteArray())
                     .setIsZip(true)
-                    .setName("Archive")
+                    .setName("nameless")
                     .setContentType("application/zip");
 
         } catch (IOException e) {
