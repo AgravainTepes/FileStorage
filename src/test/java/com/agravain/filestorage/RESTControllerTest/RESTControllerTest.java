@@ -11,6 +11,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.web.servlet.MockMvc;
@@ -53,12 +54,14 @@ class RESTControllerTest {
         MockMultipartFile mockFile =
                 new MockMultipartFile(
                         "file", "filename.txt",
-                        MediaType.TEXT_PLAIN_VALUE, "some xml".getBytes());
+                        MediaType.TEXT_PLAIN_VALUE, "some txt".getBytes());
 
         byte[] fileBytes = mockFile.getBytes();
 
+        String responseMessage = "Content uploaded!";
+
         when(fileService.saveFile(mockFile, fileBytes))
-                .thenReturn("Content uploaded!");
+                .thenReturn(responseMessage);
 
 
         mockMvc.perform(multipart("/api/upload")
@@ -66,7 +69,7 @@ class RESTControllerTest {
                 .andExpect(status()
                         .isOk())
                 .andExpect(content()
-                        .string("Content uploaded!"));
+                        .string(responseMessage));
     }
 
     @Test
@@ -133,23 +136,66 @@ class RESTControllerTest {
         ZipSeparator zipSeparator = new ZipSeparator()
                 .setName("testName")
                 .setContentType("image/png")
-                .setSerialFile(new byte[]{1,0,1})
+                .setSerialFile(new byte[]{1, 0, 1})
                 .setIsZip(false);
 
         when(fileService.downloadByID(anyMap()))
                 .thenReturn(zipSeparator);
 
 
-        mockMvc.perform(get("/api//download").param("id","1"))
+        mockMvc.perform(get("/api//download").param("id", "1"))
                 .andExpect(status()
                         .isOk())
                 .andExpect(content().bytes(zipSeparator.getSerialFile()))
                 .andExpect(content().contentType(zipSeparator.getContentType()));
     }
 
+    @Test
+    @DisplayName("GET /api/download возвращает HTTP-ответ со статусом 200 OK" +
+            " и архив в теле ответа.")
+    void handleDownloadFilesByID_ReturnsArchive() throws Exception {
+
+        ZipSeparator zipSeparator = new ZipSeparator()
+                .setName("testName")
+                .setContentType("application/zip")
+                .setSerialFile(new byte[]{1, 0, 1})
+                .setIsZip(true);
+
+        when(fileService.downloadByID(anyMap()))
+                .thenReturn(zipSeparator);
 
 
+        mockMvc.perform(get("/api/download").param("id", "1"))
+                .andExpect(status().isOk())
+                .andExpect(content().bytes(zipSeparator.getSerialFile()))
+                .andExpect(content().contentType(zipSeparator.getContentType()));
+    }
 
+    @Test
+    @DisplayName("PATCH /api/patch/{id} возвращает HTTP-ответ со статусом 200 OK" +
+            " и сообщением об успешном обновлении.")
+    void handlePatchFileById_ReturnsValidResponseEntity() throws Exception {
+
+        MockMultipartFile mockFile =
+                new MockMultipartFile(
+                        "file", "filename.txt",
+                        MediaType.TEXT_PLAIN_VALUE, "some txt".getBytes());
+
+        byte[] fileBytes = mockFile.getBytes();
+
+        int id = 1;
+
+        String responseMessage = "File updated successfully!";
+
+        when(fileService.patchFileById(id, mockFile, fileBytes))
+                .thenReturn(responseMessage);
+
+
+        mockMvc.perform(multipart(HttpMethod.PATCH,"/api/patch/{id}", id)
+                        .file(mockFile))
+                .andExpect(status().isOk())
+                .andExpect(content().string(responseMessage));
+    }
 
 
 }

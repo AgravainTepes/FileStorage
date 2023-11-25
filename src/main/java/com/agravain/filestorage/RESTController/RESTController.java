@@ -53,10 +53,10 @@ public class RESTController {
                     "Bytes reading failed!", HttpStatus.BAD_REQUEST);
         }
 
-        String result =
+        String responseMessage =
                 service.saveFile(file, fileBytes);
 
-        return new ResponseEntity<>(result, HttpStatus.OK);
+        return new ResponseEntity<>(responseMessage, HttpStatus.OK);
     }
 
 
@@ -118,9 +118,10 @@ public class RESTController {
                     "Bytes reading failed!", HttpStatus.BAD_REQUEST);
         }
 
-        service.patchFileById(id, file, fileBytes);
+        String responseMessage =
+                service.patchFileById(id, file, fileBytes);
 
-        return new ResponseEntity<>("File updated successfully!", HttpStatus.OK);
+        return new ResponseEntity<>(responseMessage, HttpStatus.OK);
     }
 
     @DeleteMapping("/delete/{id}")

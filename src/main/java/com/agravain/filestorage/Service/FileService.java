@@ -18,7 +18,7 @@ public interface FileService {
 
      ZipSeparator downloadByID(Map<String, String[]> id);
 
-     void patchFileById(int id, MultipartFile file, byte[] fileBytes);
+    String patchFileById(int id, MultipartFile file, byte[] fileBytes);
 
      void deleteFileById(int id);
 }

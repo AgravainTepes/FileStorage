@@ -18,7 +18,7 @@ public interface FileRepository {
 
     List<FileEntity> getByID(List<Integer> id);
 
-    void patchFileById(FileEntity file, int id);
+    String patchFileById(FileEntity file, int id);
 
     void deleteFileById(int id);
 }

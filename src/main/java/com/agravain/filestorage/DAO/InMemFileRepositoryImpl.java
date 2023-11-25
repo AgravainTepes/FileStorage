@@ -116,7 +116,7 @@ public class InMemFileRepositoryImpl implements FileRepository {
     }
 
     @Override
-    public void patchFileById(FileEntity file, int id) {
+    public String patchFileById(FileEntity file, int id) {
 
         if (fileEntityMap == null || fileEntityMap.isEmpty())
             throw new NoSuchFileException("No such files inside memory!");
@@ -126,6 +126,8 @@ public class InMemFileRepositoryImpl implements FileRepository {
                     + id + " inside DB!");
 
         fileEntityMap.put(id, file);
+
+        return "File updated successfully!";
     }
 
     @Override

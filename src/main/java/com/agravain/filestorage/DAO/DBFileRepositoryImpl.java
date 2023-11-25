@@ -122,7 +122,7 @@ public class DBFileRepositoryImpl implements FileRepository {
 
     }
 
-    public void patchFileById(FileEntity file, int id) {
+    public String patchFileById(FileEntity file, int id) {
 
         Query query = entityManager
                 .createQuery("update FileEntity set name = :name," +
@@ -143,6 +143,7 @@ public class DBFileRepositoryImpl implements FileRepository {
 
         query.executeUpdate();
 
+        return "File updated successfully!";
     }
 
     public void deleteFileById(int id) {

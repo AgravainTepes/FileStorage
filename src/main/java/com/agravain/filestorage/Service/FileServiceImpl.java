@@ -53,7 +53,7 @@ public class FileServiceImpl implements FileService {
 
         String profile = defineProfile();
 
-        String result = "";
+        String responseMessage = "";
 
         FileEntity fileEntity = new FileEntity();
 
@@ -77,13 +77,13 @@ public class FileServiceImpl implements FileService {
                 .setUpdateDate(LocalDateTime.now());
 
         if (profile.equals("InDB"))
-            result =
+            responseMessage =
                     DBFileRepository.saveFile(fileEntity);
 
-        result =
+        responseMessage =
                 inMemFileRepository.saveFile(fileEntity);
 
-        return result;
+        return responseMessage;
     }
 
 
@@ -307,9 +307,11 @@ public class FileServiceImpl implements FileService {
     }
 
 
-    public void patchFileById(int id, MultipartFile file, byte[] fileBytes) {
+    public String patchFileById(int id, MultipartFile file, byte[] fileBytes) {
 
         String profile = defineProfile();
+
+        String responseMessage = "";
 
         List<Integer> idForSearch = new ArrayList<>();
 
@@ -334,7 +336,9 @@ public class FileServiceImpl implements FileService {
             fileEntity
                     .setName(file.getOriginalFilename());
 
-            DBFileRepository.patchFileById(fileEntity, id);
+            responseMessage =
+                    DBFileRepository.patchFileById(fileEntity, id);
+
         } else {
             FileEntity fileEntity =
                     inMemFileRepository
@@ -353,8 +357,12 @@ public class FileServiceImpl implements FileService {
             fileEntity
                     .setName(file.getOriginalFilename());
 
-            inMemFileRepository.patchFileById(fileEntity, id);
+            responseMessage =
+                    inMemFileRepository.patchFileById(fileEntity, id);
+
         }
+
+        return responseMessage;
     }
 
 
