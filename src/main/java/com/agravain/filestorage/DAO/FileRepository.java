@@ -20,5 +20,5 @@ public interface FileRepository {
 
     String patchFileById(FileEntity file, int id);
 
-    void deleteFileById(int id);
+    String deleteFileById(int id);
 }

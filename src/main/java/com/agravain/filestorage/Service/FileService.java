@@ -10,15 +10,18 @@ import java.util.Map;
 
 public interface FileService {
 
-     String saveFile(MultipartFile file, byte[] fileBytes);
+    String saveFile(MultipartFile file, byte[] fileBytes);
 
-     List<String> getAllFileNames();
+    List<String> getAllFileNames();
 
-     List<FileDTO> getModelsByParams(Map<String, String[]> params);
+    List<FileDTO> getModelsByParams(Map<String, String[]> params);
 
-     ZipSeparator downloadByID(Map<String, String[]> id);
+    ZipSeparator downloadByID(Map<String, String[]> id);
 
     String patchFileById(int id, MultipartFile file, byte[] fileBytes);
 
-     void deleteFileById(int id);
+    String deleteFileById(int id);
+
+    String defineProfile();
+
 }

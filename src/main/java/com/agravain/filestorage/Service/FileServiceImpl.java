@@ -366,7 +366,9 @@ public class FileServiceImpl implements FileService {
     }
 
 
-    public void deleteFileById(int id) {
+    public String deleteFileById(int id) {
+
+        String responseMessage = "";
 
         String profile = defineProfile();
 
@@ -381,15 +383,19 @@ public class FileServiceImpl implements FileService {
                             .getByID(idForSearch)
                             .get(0);
 
-            DBFileRepository.deleteFileById(id);
+            responseMessage =
+                    DBFileRepository.deleteFileById(id);
+
         } else {
 
-            inMemFileRepository.deleteFileById(id);
+            responseMessage =
+                    inMemFileRepository.deleteFileById(id);
         }
 
+        return responseMessage;
     }
 
-    private String defineProfile() {
+    public String defineProfile() {
 
         if (inMemFileRepository == null && DBFileRepository == null)
             throw new IncorrectProfileCombinationException(

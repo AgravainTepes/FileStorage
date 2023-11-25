@@ -146,7 +146,7 @@ public class DBFileRepositoryImpl implements FileRepository {
         return "File updated successfully!";
     }
 
-    public void deleteFileById(int id) {
+    public String deleteFileById(int id) {
 
         Query query = entityManager.createQuery(
                 "delete FileEntity where id = :id");
@@ -155,6 +155,7 @@ public class DBFileRepositoryImpl implements FileRepository {
 
         query.executeUpdate();
 
+        return "File delete successfully!";
     }
 
 

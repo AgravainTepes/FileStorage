@@ -23,8 +23,7 @@ import java.util.List;
 
 import static org.mockito.Mockito.anyMap;
 import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 
@@ -196,6 +195,22 @@ class RESTControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(content().string(responseMessage));
     }
+    @Test
+    @DisplayName("DELETE /api//delete/{id} возвращает HTTP-ответ со статусом 200 OK" +
+            " и сообщением об успешном удалении.")
+    void handleDeleteFileById_ReturnsValidResponseEntity() throws Exception {
 
+        int id = 1;
+
+        String responseMessage = "File delete successfully!";
+
+        when(fileService.deleteFileById(id))
+                .thenReturn(responseMessage);
+
+
+        mockMvc.perform(delete("/api//delete/{id}", id))
+                .andExpect(status().isOk())
+                .andExpect(content().string(responseMessage));
+    }
 
 }

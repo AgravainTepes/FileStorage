@@ -131,7 +131,7 @@ public class InMemFileRepositoryImpl implements FileRepository {
     }
 
     @Override
-    public void deleteFileById(int id) {
+    public String deleteFileById(int id) {
 
         if (fileEntityMap == null || fileEntityMap.isEmpty())
             throw new NoSuchFileException("No such files inside memory!");
@@ -141,5 +141,7 @@ public class InMemFileRepositoryImpl implements FileRepository {
                     + id + " inside DB!");
 
         fileEntityMap.remove(id);
+
+        return "File delete successfully!";
     }
 }

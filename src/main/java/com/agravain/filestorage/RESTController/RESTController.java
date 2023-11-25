@@ -127,8 +127,9 @@ public class RESTController {
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<String> deleteFileById(@PathVariable int id) {
 
-        service.deleteFileById(id);
+        String responseMessage =
+                service.deleteFileById(id);
 
-        return new ResponseEntity<>("File delete successfully!", HttpStatus.OK);
+        return new ResponseEntity<>(responseMessage, HttpStatus.OK);
     }
 }
