@@ -91,17 +91,18 @@ public class FileServiceImpl implements FileService {
         if (params.containsKey("name"))
             name = params.get("name")[0];
 
-        if (params.containsKey("lower") && params.containsKey("upper")) {
+        if (params.containsKey("lowerDateTime")
+                && params.containsKey("upperDateTime")) {
 
             try {
 
                 lowerDateTimeThreshold =
                         LocalDateTime
-                                .parse(params.get("lower")[0]);
+                                .parse(params.get("lowerDateTime")[0]);
 
                 upperDateTimeThreshold =
                         LocalDateTime
-                                .parse(params.get("upper")[0]);
+                                .parse(params.get("upperDateTime")[0]);
 
             } catch (DateTimeParseException dateTimeParseException) {
 
@@ -109,11 +110,11 @@ public class FileServiceImpl implements FileService {
 
                     lowerDateThreshold =
                             LocalDate
-                                    .parse(params.get("lower")[0]);
+                                    .parse(params.get("lowerDateTime")[0]);
 
                     upperDateThreshold =
                             LocalDate
-                                    .parse(params.get("upper")[0]);
+                                    .parse(params.get("upperDateTime")[0]);
 
                     lowerDateTimeThreshold =
                             LocalDateTime
@@ -153,7 +154,7 @@ public class FileServiceImpl implements FileService {
 
         if (entityList.isEmpty())
             throw new NoSuchFileException(
-                    "No such files with this parameters in data base!!!");
+                    "No such files with this parameters in data base!");
 
         List<FileDTO> fileDTOS = new ArrayList<>();
 
@@ -239,14 +240,11 @@ public class FileServiceImpl implements FileService {
 
             zop.finish();
 
-            ZipSeparator zipSeparator =
-                    new ZipSeparator();
-            zipSeparator
-                    .setSerialFile(bos.toByteArray());
-            zipSeparator
-                    .setIsZip(true);
-
-            return zipSeparator;
+            return new ZipSeparator()
+                    .setSerialFile(bos.toByteArray())
+                    .setIsZip(true)
+                    .setName("Archive")
+                    .setContentType("application/zip");
 
         } catch (IOException e) {
 

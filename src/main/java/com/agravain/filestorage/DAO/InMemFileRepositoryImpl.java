@@ -24,13 +24,22 @@ public class InMemFileRepositoryImpl implements FileRepository {
         if (fileEntityMap == null)
             fileEntityMap = new HashMap<>();
 
-        if (fileEntityMap.containsValue(fileEntity))
-            throw new FileIsAlreadyExistsException(
-                    "FIle with this name : " +
-                            fileEntity.getName() +
-                            " and this type : " +
-                            fileEntity.getType() + " is already exists! " +
-                            " If you want to update him use PATCH METHOD!");
+        if (!fileEntityMap.isEmpty())
+
+            for (FileEntity entity : fileEntityMap.values()) {
+
+                if (entity.getName().equals(fileEntity.getName()) &&
+                        entity.getType().equals(fileEntity.getType()))
+
+                    throw new FileIsAlreadyExistsException(
+                            "FIle with this name : " +
+                                    fileEntity.getName() +
+                                    " and this type : " +
+                                    fileEntity.getType() + " is already exists! " +
+                                    " If you want to update him use PATCH METHOD!");
+
+            }
+
 
         fileEntity.setId(currentID);
 
@@ -80,10 +89,14 @@ public class InMemFileRepositoryImpl implements FileRepository {
 
             for (FileEntity entity : nonfilteredEntityList) {
 
-                if (((name == null || entity.getName().contains(name))
-                        && (type == null || type.equals(entity.getType()))
-                        && (lower == null || lower.isBefore(entity.getUpdateDate()))
-                        && (lower == null || lower.isBefore(entity.getUpdateDate())))) {
+                if (((name == null
+                        || entity.getName().toLowerCase().contains(name.toLowerCase()))
+                        && (type == null
+                        || entity.getType().toLowerCase().contains(type.toLowerCase()))
+                        && (lower == null
+                        || lower.isBefore(entity.getUpdateDate()))
+                        && (lower == null
+                        || lower.isBefore(entity.getUpdateDate())))) {
 
                     filteredEntityList.add(entity);
 

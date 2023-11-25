@@ -1,24 +1,25 @@
 package com.agravain.filestorage.RESTController;
 
 import com.agravain.filestorage.DTO.FileDTO;
-import com.agravain.filestorage.Entity.FileEntity;
 import com.agravain.filestorage.Exceptions.FileExceptions.NoSuchFileException;
 import com.agravain.filestorage.Service.FileServiceImpl;
 import com.agravain.filestorage.Utils.ZipSeparator;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 
@@ -26,6 +27,7 @@ import java.util.Map;
 @RestController
 @RequestMapping("/api")
 @EnableAspectJAutoProxy
+@Tag(name = "Хранилище файлов", description = "Методы для работы с файлами")
 public class RESTController {
 
     private FileServiceImpl service;
@@ -37,9 +39,30 @@ public class RESTController {
 
     }
 
-    @PostMapping("/upload")
+    @PostMapping(value = "/upload", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
+    @Operation(summary = "Загрузка файла")
+
+    @ApiResponse(responseCode = "200",
+            description = "Content uploaded!",
+            content = {@Content(
+                    schema = @Schema(defaultValue = "Content uploaded!"),
+                    mediaType = "application/json")})
+
+    @ApiResponse(responseCode = "400",
+            description = "File is already exists!",
+            content = {@Content(
+                    schema = @Schema(defaultValue = "File is already exists"),
+                    mediaType = "application/json")})
+
+    @ApiResponse(responseCode = "406",
+            description = "Bytes reading failed!",
+            content = {@Content(
+                    schema = @Schema(defaultValue = "Bytes reading failed!"),
+                    mediaType = "application/json")})
+
     public ResponseEntity<String> uploadFile(
-            @RequestBody MultipartFile file) {
+            @RequestBody
+            MultipartFile file) {
 
         byte[] fileBytes;
 
@@ -50,7 +73,7 @@ public class RESTController {
         } catch (IOException e) {
 
             return new ResponseEntity<>(
-                    "Bytes reading failed!", HttpStatus.BAD_REQUEST);
+                    "Bytes reading failed!", HttpStatusCode.valueOf(406));
         }
 
         String responseMessage =
@@ -62,53 +85,153 @@ public class RESTController {
 
 
     @GetMapping("/names")
+    @Operation(summary = "Возвращает список всех имён файлов, находящихся в БД или ОЗУ")
+
+    @ApiResponse(responseCode = "200",
+            description = "List of names received!",
+            content = {@Content(
+                    schema = @Schema(defaultValue = "listOfNames : {Mammal.png," +
+                            " BirdMan.pdf, Udult.gif}"),
+                    mediaType = "application/json")})
+
+    @ApiResponse(responseCode = "404",
+            description = "Storage is empty",
+            content = {@Content(
+                    schema = @Schema(defaultValue = "info " + ":" +
+                            " No such files inside DB!"),
+                    mediaType = "application/json")})
+
     public ResponseEntity<List<String>> getAllFileNames() {
+
         List<String> names = service.getAllFileNames();
+
         return new ResponseEntity<>(names, HttpStatus.OK);
 
     }
 
-    @GetMapping("/filtered")
+    @GetMapping("/filtered{name}{type}{lowerDateTime}{upperDateTime}")
+    @Operation(summary = "Возвращает список всех моделей данных," +
+            " удовлетворяющих переданным параметрам")
+
+    @ApiResponse(responseCode = "200",
+            description = "List of models received!",
+            content = {@Content(
+                    schema = @Schema(defaultValue = """
+                            id: 0
+                            name: Aboba.pdf
+                            type: application/pdf
+                            size: 224438
+                            createDate: 2023-11-25 20:48:23
+                            updateDate: 2023-11-25 20:48:23
+                            downloadURL: /api/download?id=0\s"""), mediaType = "*/*")})
+
+    @ApiResponse(responseCode = "404",
+            description = "No such files with this parameters in data base!",
+            content = {@Content(
+                    schema = @Schema(defaultValue = "info" + ":" +
+                            " No such files with this parameters in data base!"),
+                    mediaType = "application/json")})
+
     public ResponseEntity<List<FileDTO>> getModelsByParams(
+            @RequestParam(required = false)
+            @PathVariable String name,
+
+            @RequestParam(required = false)
+            @PathVariable String[] type,
+
+            @RequestParam(required = false, defaultValue = "2024-01-01T12:00:00")
+            @PathVariable String lowerDateTime,
+
+            @RequestParam(required = false, defaultValue = "2024-01-01T12:01:00")
+            @PathVariable String upperDateTime,
+
             HttpServletRequest request) {
 
-        Map<String, String[]> params = request.getParameterMap();
+        Map<String, String[]> requestParams = request.getParameterMap();
 
-        List<FileDTO> fileModels = service.getModelsByParams(params);
+        List<FileDTO> fileModels = service.getModelsByParams(requestParams);
 
         return new ResponseEntity<>(fileModels, HttpStatus.OK);
 
     }
 
-    @GetMapping("/download")
+    @GetMapping(value = "/download", produces = MediaType.ALL_VALUE)
+    @Operation(summary = "Скачивание одного файла или нескольких архивом")
+
+    @ApiResponse(responseCode = "200",
+            description = "Content downloaded!",
+            content = {@Content(
+                    schema = @Schema(defaultValue = """
+                            accept-ranges: bytes
+                            connection: keep-alive
+                            content-disposition: attachment; Aboba.pdf
+                            content-length: 224438  content-type: application/pdf
+                            date: Sat,25 Nov 2023 16:37:27 GMT
+                            keep-alive: timeout=60\s"""), mediaType = "*/*")})
+
+    @ApiResponse(responseCode = "404",
+            description = "No such files with this IDs inside DB ",
+            content = {@Content(
+                    schema = @Schema(defaultValue = "info " + ":" +
+                            " No such files with id 5, 13 and 8 inside DB!"),
+                    mediaType = "application/json")})
+
     public ResponseEntity<Resource> downloadFilesByID(
+            @RequestParam
+            @PathVariable int[] id,
             HttpServletRequest request) {
 
-        Map<String, String[]> id = request.getParameterMap();
+        Map<String, String[]> idMap = request.getParameterMap();
 
-        if (id.isEmpty())
+        if (idMap.isEmpty())
             throw new NoSuchFileException("Indicate at least one ID!");
 
-        ZipSeparator separator = service.downloadByID(id);
+        ZipSeparator separator = service.downloadByID(idMap);
 
         if (separator.isZip())
             return ResponseEntity
                     .ok()
-                    .contentType(MediaType.parseMediaType("application/zip"))
+                    .header(HttpHeaders.CONTENT_DISPOSITION,
+                            "attachment; " + separator.getName())
+                    .contentType(MediaType.parseMediaType(separator.getContentType()))
                     .body(new ByteArrayResource(separator.getSerialFile()));
 
         return ResponseEntity
                 .ok()
-                .contentType(MediaType.parseMediaType(separator.getContentType()))
                 .header(HttpHeaders.CONTENT_DISPOSITION,
-                        "attachment; filename=\"" + separator.getName() + "\"")
+                        "attachment; " + separator.getName())
+                .contentType(MediaType.parseMediaType(separator.getContentType()))
                 .body(new ByteArrayResource(separator.getSerialFile()));
 
     }
 
     @PatchMapping("/patch/{id}")
-    public ResponseEntity<String> patchFileById(@PathVariable int id,
-                                                @RequestBody MultipartFile file) {
+    @Operation(summary = "Обновление файла c указанным Id")
+
+    @ApiResponse(responseCode = "200",
+            description = "File updated successfully!",
+            content = {@Content(
+                    schema = @Schema(defaultValue = """
+                            id: 0
+                            name: Aboba.pdf
+                            type: application/pdf
+                            size: 224438
+                            createDate: 2023-11-25 20:48:23
+                            updateDate: 2023-11-29 17:33:05
+                            downloadURL: /api/download?id=0\s"""), mediaType = "*/*")})
+
+    @ApiResponse(responseCode = "404",
+            description = "No such files with id 0 inside DB ",
+            content = {@Content(
+                    schema = @Schema(defaultValue = "info" + ":" +
+                            " No such files with id 0 inside DB!"),
+                    mediaType = "application/json")})
+
+    public ResponseEntity<String> patchFileById(
+            @Parameter
+            @PathVariable int id,
+            @Parameter
+            @RequestBody MultipartFile file) {
 
         byte[] fileBytes;
 
@@ -130,7 +253,21 @@ public class RESTController {
     }
 
     @DeleteMapping("/delete/{id}")
-    public ResponseEntity<String> deleteFileById(@PathVariable int id) {
+    @Operation(summary = "Удаление файла с указанным Id")
+
+    @ApiResponse(responseCode = "200",
+            description = "File delete successfully!")
+
+    @ApiResponse(responseCode = "404",
+            description = "No such files with id 0 inside DB ",
+            content = {@Content(
+                    schema = @Schema(defaultValue = "info" + ":" +
+                            " No such files with id 0 inside DB!"),
+                    mediaType = "application/json")})
+
+    public ResponseEntity<String> deleteFileById(
+            @Parameter
+            @PathVariable int id) {
 
         String responseMessage =
                 service.deleteFileById(id);
