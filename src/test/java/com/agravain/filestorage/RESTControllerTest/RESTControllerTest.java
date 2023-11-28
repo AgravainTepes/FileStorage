@@ -191,7 +191,7 @@ class RESTControllerTest {
 
 
         mockMvc.perform(multipart(HttpMethod.PATCH,"/api/patch/{id}", id)
-                        .file(mockFile).param("id","1"))
+                        .file(mockFile))
                 .andExpect(status().isOk())
                 .andExpect(content().string(responseMessage));
     }
@@ -208,8 +208,7 @@ class RESTControllerTest {
                 .thenReturn(responseMessage);
 
 
-        mockMvc.perform(delete("/api//delete/{id}", id)
-                        .param("id","1"))
+        mockMvc.perform(delete("/api//delete/{id}", id))
                 .andExpect(status().isOk())
                 .andExpect(content().string(responseMessage));
     }
