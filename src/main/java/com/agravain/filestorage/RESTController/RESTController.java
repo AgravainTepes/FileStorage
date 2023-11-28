@@ -109,7 +109,7 @@ public class RESTController {
 
     }
 
-    @GetMapping("/filtered{name}{type}{lowerDateTime}{upperDateTime}")
+    @GetMapping("/filtered")
     @Operation(summary = "Возвращает список всех моделей данных," +
             " удовлетворяющих переданным параметрам")
 
@@ -134,16 +134,16 @@ public class RESTController {
 
     public ResponseEntity<List<FileDTO>> getModelsByParams(
             @RequestParam(required = false)
-            @PathVariable String name,
+            String name,
 
             @RequestParam(required = false)
-            @PathVariable String[] type,
+            String[] type,
 
             @RequestParam(required = false, defaultValue = "2024-01-01T12:00:00")
-            @PathVariable String lowerDateTime,
+            String lowerDateTime,
 
             @RequestParam(required = false, defaultValue = "2024-01-01T12:01:00")
-            @PathVariable String upperDateTime,
+            String upperDateTime,
 
             HttpServletRequest request) {
 
@@ -239,7 +239,6 @@ public class RESTController {
                     mediaType = "application/json")})
 
     public ResponseEntity<String> patchFileById(
-            @RequestParam
             @PathVariable int id,
             @RequestBody MultipartFile file) {
 
@@ -276,7 +275,6 @@ public class RESTController {
                     mediaType = "application/json")})
 
     public ResponseEntity<String> deleteFileById(
-            @RequestParam
             @PathVariable int id) {
 
         String responseMessage =

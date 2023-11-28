@@ -132,7 +132,7 @@ public class DBFileRepositoryImpl implements FileRepository {
         checkQuery.setParameter("id", id);
 
         List<FileEntity> checkEntity =
-                (List<FileEntity>) checkQuery.getResultList().get(0);
+                (List<FileEntity>) checkQuery.getResultList();
 
         if (checkEntity.isEmpty())
             throw new NoSuchFileException("No such file with id: "
@@ -169,7 +169,7 @@ public class DBFileRepositoryImpl implements FileRepository {
         checkQuery.setParameter("id", id);
 
         List<FileEntity> checkEntity =
-                (List<FileEntity>) checkQuery.getResultList().get(0);
+                (List<FileEntity>) checkQuery.getResultList();
 
         if (checkEntity.isEmpty())
             throw new NoSuchFileException("No such file with id: "
