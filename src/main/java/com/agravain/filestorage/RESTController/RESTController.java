@@ -179,7 +179,6 @@ public class RESTController {
                     mediaType = "application/json")})
 
     public ResponseEntity<Resource> downloadFilesByID(
-            @RequestParam
             @PathVariable int[] id,
             @RequestParam(defaultValue = "nameless", required = false)
             String archiveName,
@@ -222,15 +221,8 @@ public class RESTController {
     @ApiResponse(responseCode = "200",
             description = "File updated successfully!",
             content = {@Content(
-                    schema = @Schema(defaultValue = """
-                            id: 0
-                            name: Aboba.pdf
-                            type: application/pdf
-                            size: 224438
-                            createDate: 2023-11-25 20:48:23
-                            updateDate: 2023-11-29 17:33:05
-                            downloadURL: /api/download?id=0\s"""), mediaType = "*/*")})
-
+                    schema = @Schema(defaultValue = "Content uploaded successfully!"),
+                    mediaType = "application/json")})
     @ApiResponse(responseCode = "404",
             description = "No such files with id 0 inside DB ",
             content = {@Content(
@@ -265,7 +257,10 @@ public class RESTController {
     @Operation(summary = "Удаление файла с указанным Id")
 
     @ApiResponse(responseCode = "200",
-            description = "File delete successfully!")
+            description = "File delete successfully!",
+            content = {@Content(
+                    schema = @Schema(defaultValue = "File delete successfully!"),
+                    mediaType = "application/json")})
 
     @ApiResponse(responseCode = "404",
             description = "No such file with id 0 inside DB ",
