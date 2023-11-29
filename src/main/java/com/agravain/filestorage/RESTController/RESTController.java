@@ -179,6 +179,7 @@ public class RESTController {
                     mediaType = "application/json")})
 
     public ResponseEntity<Resource> downloadFilesByID(
+            @RequestParam(required = false)
             @PathVariable int[] id,
             @RequestParam(defaultValue = "nameless", required = false)
             String archiveName,
