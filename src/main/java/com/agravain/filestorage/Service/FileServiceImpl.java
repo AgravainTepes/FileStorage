@@ -5,7 +5,7 @@ import com.agravain.filestorage.DTO.FileDTO;
 import com.agravain.filestorage.Entity.FileEntity;
 import com.agravain.filestorage.Exceptions.FileExceptions.IncorrectFileTimeException;
 import com.agravain.filestorage.Exceptions.FileExceptions.NoSuchFileException;
-import com.agravain.filestorage.Exceptions.FileExceptions.ZipFailException;
+import com.agravain.filestorage.Exceptions.FileExceptions.ZipFileException;
 import com.agravain.filestorage.Utils.ZipSeparator;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -246,7 +246,7 @@ public class FileServiceImpl implements FileService {
 
         } catch (IOException e) {
 
-            throw new ZipFailException("Compression collapsed!");
+            throw new ZipFileException("Compression collapsed!");
 
         }
     }

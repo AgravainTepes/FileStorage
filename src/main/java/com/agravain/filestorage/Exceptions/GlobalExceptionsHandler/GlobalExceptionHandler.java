@@ -82,7 +82,7 @@ public class GlobalExceptionHandler {
     }
     @ExceptionHandler
     public ResponseEntity<IncorrectFileDataException> handleException(
-            ZipFailException exception) {
+            ZipFileException exception) {
 
         IncorrectFileDataException data = new IncorrectFileDataException();
 
