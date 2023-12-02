@@ -6,12 +6,10 @@ import com.agravain.filestorage.Entity.FileEntity;
 import com.agravain.filestorage.Exceptions.FileExceptions.IncorrectFileTimeException;
 import com.agravain.filestorage.Exceptions.FileExceptions.NoSuchFileException;
 import com.agravain.filestorage.Exceptions.FileExceptions.ZipFileException;
-import com.agravain.filestorage.Utils.ZipSeparator;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.charset.Charset;
@@ -172,7 +170,7 @@ public class FileServiceImpl implements FileService {
     }
 
 
-    public ZipSeparator downloadByID(Map<String, String[]> id) {
+    public FileEntity downloadByID(Map<String, String[]> id) {
 
         List<String> StrIDList = new ArrayList<>();
 
@@ -194,9 +192,11 @@ public class FileServiceImpl implements FileService {
 
         if (entityList.size() == 1) {
 
+            int singleFileIndex = 0;
+
             FileEntity singleEntity =
                     entityList
-                            .get(0);
+                            .get(singleFileIndex);
 
             byte[] serialFile =
                     singleEntity
@@ -210,10 +210,9 @@ public class FileServiceImpl implements FileService {
                     singleEntity
                             .getName();
 
-            return new ZipSeparator()
-                    .setSerialFile(serialFile)
-                    .setIsZip(false)
-                    .setContentType(contentType)
+            return new FileEntity()
+                    .setFile(serialFile)
+                    .setType(contentType)
                     .setName(fileName);
 
         }
@@ -238,11 +237,10 @@ public class FileServiceImpl implements FileService {
 
             zop.finish();
 
-            return new ZipSeparator()
-                    .setSerialFile(bos.toByteArray())
-                    .setIsZip(true)
+            return new FileEntity()
+                    .setFile(bos.toByteArray())
                     .setName("nameless")
-                    .setContentType("application/zip");
+                    .setType("application/zip");
 
         } catch (IOException e) {
 

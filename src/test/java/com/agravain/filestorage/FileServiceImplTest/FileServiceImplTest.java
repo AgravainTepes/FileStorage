@@ -29,9 +29,6 @@ public class FileServiceImplTest {
     @Mock
     private FileRepository fileRepository;
 
-    @InjectMocks
-    private FileServiceImpl fileService;
-
     @Test
     @DisplayName("Создаёт Entity и передаёт его репозиторию." +
             " Возвращает сообщение об успешном выполнении.")

@@ -1,9 +1,9 @@
 package com.agravain.filestorage.RESTControllerTest;
 
 import com.agravain.filestorage.DTO.FileDTO;
+import com.agravain.filestorage.Entity.FileEntity;
 import com.agravain.filestorage.RESTController.RESTController;
 import com.agravain.filestorage.Service.FileServiceImpl;
-import com.agravain.filestorage.Utils.ZipSeparator;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -132,21 +132,20 @@ class RESTControllerTest {
             " и файл в теле ответа.")
     void handleDownloadFilesByID_ReturnsSingleFile() throws Exception {
 
-        ZipSeparator zipSeparator = new ZipSeparator()
+        FileEntity file = new FileEntity()
                 .setName("testName")
-                .setContentType("image/png")
-                .setSerialFile(new byte[]{1, 0, 1})
-                .setIsZip(false);
+                .setType("image/png")
+                .setFile(new byte[]{1, 0, 1});
 
         when(fileService.downloadByID(anyMap()))
-                .thenReturn(zipSeparator);
+                .thenReturn(file);
 
 
         mockMvc.perform(get("/api//download").param("id", "1"))
                 .andExpect(status()
                         .isOk())
-                .andExpect(content().bytes(zipSeparator.getSerialFile()))
-                .andExpect(content().contentType(zipSeparator.getContentType()));
+                .andExpect(content().bytes(file.getFile()))
+                .andExpect(content().contentType(file.getType()));
     }
 
     @Test
@@ -154,20 +153,19 @@ class RESTControllerTest {
             " и архив в теле ответа.")
     void handleDownloadFilesByID_ReturnsArchive() throws Exception {
 
-        ZipSeparator zipSeparator = new ZipSeparator()
+        FileEntity file = new FileEntity()
                 .setName("testName")
-                .setContentType("application/zip")
-                .setSerialFile(new byte[]{1, 0, 1})
-                .setIsZip(true);
+                .setType("application/zip")
+                .setFile(new byte[]{1, 0, 1});
 
         when(fileService.downloadByID(anyMap()))
-                .thenReturn(zipSeparator);
+                .thenReturn(file);
 
 
         mockMvc.perform(get("/api/download").param("id", "1"))
                 .andExpect(status().isOk())
-                .andExpect(content().bytes(zipSeparator.getSerialFile()))
-                .andExpect(content().contentType(zipSeparator.getContentType()));
+                .andExpect(content().bytes(file.getFile()))
+                .andExpect(content().contentType(file.getType()));
     }
 
     @Test

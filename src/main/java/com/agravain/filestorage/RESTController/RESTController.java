@@ -1,11 +1,10 @@
 package com.agravain.filestorage.RESTController;
 
 import com.agravain.filestorage.DTO.FileDTO;
+import com.agravain.filestorage.Entity.FileEntity;
 import com.agravain.filestorage.Exceptions.FileExceptions.NoSuchFileException;
 import com.agravain.filestorage.Service.FileServiceImpl;
-import com.agravain.filestorage.Utils.ZipSeparator;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -18,7 +17,6 @@ import org.springframework.core.io.Resource;
 import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
@@ -191,28 +189,28 @@ public class RESTController {
         if (idMap.isEmpty())
             throw new NoSuchFileException("Indicate at least one ID!");
 
-        ZipSeparator separator = service.downloadByID(idMap);
+        FileEntity file = service.downloadByID(idMap);
 
-        if (separator.isZip()) {
+        if (file.getType().equals("application/zip")) {
 
             if (archiveName != null && !archiveName.isEmpty())
-                separator.setName(archiveName);
+                file.setName(archiveName);
 
             return ResponseEntity
                     .ok()
                     .header(HttpHeaders.CONTENT_DISPOSITION,
-                            "attachment; filename=" + separator.getName())
-                    .contentType(MediaType.parseMediaType(separator.getContentType()))
-                    .body(new ByteArrayResource(separator.getSerialFile()));
+                            "attachment; filename=" + file.getName())
+                    .contentType(MediaType.parseMediaType(file.getType()))
+                    .body(new ByteArrayResource(file.getFile()));
 
         }
 
         return ResponseEntity
                 .ok()
                 .header(HttpHeaders.CONTENT_DISPOSITION,
-                        "attachment; filename=" + separator.getName())
-                .contentType(MediaType.parseMediaType(separator.getContentType()))
-                .body(new ByteArrayResource(separator.getSerialFile()));
+                        "attachment; filename=" + file.getName())
+                .contentType(MediaType.parseMediaType(file.getType()))
+                .body(new ByteArrayResource(file.getFile()));
 
     }
 
